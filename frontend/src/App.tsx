@@ -5,6 +5,7 @@ import LandingPage from './LandingPage'
 import ClickSpark from './components/ClickSpark'
 import AudithorLogo from './components/AudithorLogo'
 import NanoCounter from './components/NanoCounter'
+import { BentoCard } from './components/MagicBento'
 
 // --- DEMO DATA ---
 const DEMO_FINDINGS: AuditFinding[] = [
@@ -40,7 +41,7 @@ const SEV: Record<string, { border: string; badge: string; text: string }> = {
   CRITICAL: { border: '#ef4444', badge: 'rgba(239,68,68,0.1)',  text: '#ef4444' },
   HIGH:     { border: '#f97316', badge: 'rgba(249,115,22,0.1)', text: '#f97316' },
   MEDIUM:   { border: '#f59e0b', badge: 'rgba(245,158,11,0.1)', text: '#f59e0b' },
-  LOW:      { border: '#0891b2', badge: 'rgba(8,145,178,0.1)',  text: '#0891b2' },
+  LOW:      { border: '#3b82f6', badge: 'rgba(59,130,246,0.1)', text: '#3b82f6' },
 }
 
 // --- FINDING CARD ---
@@ -49,8 +50,8 @@ function FindingCard({ finding }: { finding: AuditFinding }) {
   return (
     <div className="finding-card" style={{
       borderRadius: 8,
-      background: 'rgba(8,20,35,0.7)',
-      border: '1px solid rgba(8,145,178,0.1)',
+      background: 'rgba(6,11,24,0.75)',
+      border: '1px solid rgba(37,99,235,0.1)',
       borderLeft: `3px solid ${s.border}`,
       padding: '10px 13px',
       display: 'flex', flexDirection: 'column', gap: 5,
@@ -66,10 +67,10 @@ function FindingCard({ finding }: { finding: AuditFinding }) {
           {finding.title}
         </span>
       </div>
-      <div style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 10, color: '#3a5a70' }}>
+      <div style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 10, color: '#334155' }}>
         line {finding.line}
       </div>
-      <div style={{ fontSize: 11.5, color: '#4a7a96', lineHeight: 1.5 }}>
+      <div style={{ fontSize: 11.5, color: '#475569', lineHeight: 1.5 }}>
         {finding.description}
       </div>
     </div>
@@ -81,8 +82,8 @@ function EmptyState({ scanning }: { scanning: boolean }) {
   if (scanning) {
     return (
       <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 14, padding: 32 }}>
-        <div style={{ width: '50%', height: 1, background: 'linear-gradient(90deg, transparent, #0891b2, transparent)', opacity: 0.4 }}/>
-        <span style={{ color: '#4a7a96', fontSize: 12, fontFamily: 'JetBrains Mono, monospace' }}>scanning for vulnerabilities...</span>
+        <div style={{ width: '50%', height: 1, background: 'linear-gradient(90deg, transparent, #2563eb, transparent)', opacity: 0.4 }}/>
+        <span style={{ color: '#475569', fontSize: 12, fontFamily: 'JetBrains Mono, monospace' }}>scanning for vulnerabilities...</span>
       </div>
     )
   }
@@ -219,7 +220,7 @@ export default function App() {
   const sevCounts = { CRITICAL: 0, HIGH: 0, MEDIUM: 0, LOW: 0 }
   findings.forEach(f => { sevCounts[f.severity]++ })
 
-  const timeColor = timeRemaining < 10 ? '#ef4444' : timeRemaining < 20 ? '#f59e0b' : '#0891b2'
+  const timeColor = timeRemaining < 10 ? '#ef4444' : timeRemaining < 20 ? '#f59e0b' : '#2563eb'
 
   void demoMode
   void baseRate
@@ -232,16 +233,16 @@ export default function App() {
 
   // Dashboard
   return (
-    <ClickSpark sparkColor="#0891b2" sparkCount={6} sparkRadius={20} sparkSize={8}>
-      <div style={{ minHeight: '100vh', background: '#060d14', display: 'flex', flexDirection: 'column' }}>
+    <ClickSpark sparkColor="#2563eb" sparkCount={6} sparkRadius={20} sparkSize={8}>
+      <div style={{ minHeight: '100vh', background: '#060b18', display: 'flex', flexDirection: 'column' }}>
 
         {/* TOP NAVBAR */}
         <nav style={{
           height: 60,
-          background: 'rgba(6,13,20,0.95)',
+          background: 'rgba(6,11,24,0.95)',
           backdropFilter: 'blur(12px)',
           WebkitBackdropFilter: 'blur(12px)',
-          borderBottom: '1px solid rgba(8,145,178,0.12)',
+          borderBottom: '1px solid rgba(37,99,235,0.12)',
           display: 'flex', alignItems: 'center',
           padding: '0 24px', gap: 16, flexShrink: 0, zIndex: 10,
           position: 'sticky', top: 0,
@@ -254,10 +255,10 @@ export default function App() {
             <AudithorLogo size={32}/>
             <div>
               <div style={{ fontSize: 16, fontWeight: 800, letterSpacing: '-0.03em', fontFamily: 'Inter, sans-serif' }}>
-                <span style={{ color: '#0891b2' }}>Audit</span>
+                <span style={{ color: '#2563eb' }}>Audit</span>
                 <span style={{ color: '#e2f0f7' }}>hor</span>
               </div>
-              <div style={{ fontSize: 8, letterSpacing: '0.18em', color: '#4a7a96', fontWeight: 600, fontFamily: 'JetBrains Mono, monospace' }}>
+              <div style={{ fontSize: 8, letterSpacing: '0.18em', color: '#475569', fontWeight: 600, fontFamily: 'JetBrains Mono, monospace' }}>
                 SECURITY · STREAM
               </div>
             </div>
@@ -265,8 +266,8 @@ export default function App() {
 
           {/* Network badge */}
           <div style={{
-            background: 'rgba(8,145,178,0.1)', border: '1px solid rgba(8,145,178,0.25)',
-            color: '#0891b2', borderRadius: 20, padding: '3px 10px',
+            background: 'rgba(37,99,235,0.1)', border: '1px solid rgba(37,99,235,0.25)',
+            color: '#3b82f6', borderRadius: 20, padding: '3px 10px',
             fontSize: 10, fontWeight: 600, letterSpacing: '0.08em',
             fontFamily: 'JetBrains Mono, monospace',
           }}>HEDERA TESTNET</div>
@@ -277,9 +278,9 @@ export default function App() {
           <div style={{ display: 'flex', gap: 4 }}>
             {(['Dashboard', 'History', 'Certifications'] as const).map((item, i) => (
               <button key={item} style={{
-                background: i === 0 ? 'rgba(8,145,178,0.12)' : 'transparent',
-                border: i === 0 ? '1px solid rgba(8,145,178,0.25)' : '1px solid transparent',
-                color: i === 0 ? '#0891b2' : '#4a7a96',
+                background: i === 0 ? 'rgba(37,99,235,0.12)' : 'transparent',
+                border: i === 0 ? '1px solid rgba(37,99,235,0.25)' : '1px solid transparent',
+                color: i === 0 ? '#3b82f6' : '#475569',
                 borderRadius: 20, padding: '6px 14px',
                 fontSize: 12, fontWeight: 600, cursor: 'pointer',
                 fontFamily: 'Inter, sans-serif', transition: 'all 0.2s',
@@ -298,25 +299,25 @@ export default function App() {
             {walletAddress ? (
               <div style={{
                 fontFamily: 'JetBrains Mono, monospace', fontSize: 11,
-                color: '#0891b2', background: 'rgba(8,145,178,0.08)',
-                border: '1px solid rgba(8,145,178,0.2)',
+                color: '#3b82f6', background: 'rgba(37,99,235,0.08)',
+                border: '1px solid rgba(37,99,235,0.2)',
                 borderRadius: 20, padding: '5px 12px',
               }}>
                 {walletAddress.slice(0,6)}...{walletAddress.slice(-4)}
               </div>
             ) : (
               <button onClick={connectWallet} style={{
-                background: 'linear-gradient(135deg, #0891b2, #0e7490)',
+                background: 'linear-gradient(135deg, #2563eb, #1d4ed8)',
                 color: 'white', border: 'none', borderRadius: 20,
                 padding: '7px 16px', fontSize: 12, fontWeight: 700,
                 cursor: 'pointer', fontFamily: 'Inter, sans-serif',
-                boxShadow: '0 0 16px rgba(8,145,178,0.25)',
+                boxShadow: '0 0 16px rgba(37,99,235,0.25)',
               }}>Connect Wallet</button>
             )}
 
             <div style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
-              <div style={{ width: 6, height: 6, borderRadius: '50%', background: isLive ? '#10b981' : '#0891b2' }}/>
-              <span style={{ fontSize: 11, color: isLive ? '#10b981' : '#4a7a96', fontFamily: 'JetBrains Mono, monospace' }}>
+              <div style={{ width: 6, height: 6, borderRadius: '50%', background: isLive ? '#10b981' : '#2563eb' }}/>
+              <span style={{ fontSize: 11, color: isLive ? '#10b981' : '#475569', fontFamily: 'JetBrains Mono, monospace' }}>
                 {isLive ? 'Live' : 'Demo'}
               </span>
             </div>
@@ -336,27 +337,27 @@ export default function App() {
 
             {/* Hero banner */}
             <div style={{
-              background: 'rgba(8,145,178,0.06)',
-              border: '1px solid rgba(8,145,178,0.15)',
+              background: 'rgba(37,99,235,0.06)',
+              border: '1px solid rgba(37,99,235,0.15)',
               borderRadius: 10, padding: '13px 16px',
               display: 'flex', alignItems: 'center', justifyContent: 'space-between',
               flexShrink: 0,
             }}>
               <div>
-                <div style={{ fontSize: 10, color: '#4a7a96', fontWeight: 600, letterSpacing: '0.1em', marginBottom: 3, fontFamily: 'JetBrains Mono, monospace' }}>
+                <div style={{ fontSize: 10, color: '#475569', fontWeight: 600, letterSpacing: '0.1em', marginBottom: 3, fontFamily: 'JetBrains Mono, monospace' }}>
                   SMART CONTRACT AUDIT
                 </div>
                 <div style={{ fontSize: 16, fontWeight: 700, color: '#e2f0f7', letterSpacing: '-0.02em' }}>
                   AI-Powered Security
                 </div>
-                <div style={{ fontSize: 11, color: '#4a7a96', marginTop: 2 }}>
+                <div style={{ fontSize: 11, color: '#475569', marginTop: 2 }}>
                   Pay per second · Verified by World ID
                 </div>
               </div>
               <div style={{
                 width: 40, height: 40, borderRadius: 10,
-                background: 'rgba(8,145,178,0.1)',
-                border: '1px solid rgba(8,145,178,0.2)',
+                background: 'rgba(37,99,235,0.1)',
+                border: '1px solid rgba(37,99,235,0.2)',
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
                 fontSize: 18,
               }}>🔍</div>
@@ -364,15 +365,15 @@ export default function App() {
 
             {/* Code card */}
             <div style={{
-              flex: 1, background: 'rgba(6,13,20,0.8)',
-              border: '1px solid rgba(8,145,178,0.12)',
+              flex: 1, background: 'rgba(6,11,24,0.85)',
+              border: '1px solid rgba(37,99,235,0.12)',
               borderRadius: 12, overflow: 'hidden',
               display: 'flex', flexDirection: 'column', minHeight: 0,
             }}>
               {/* Tabs */}
               <div style={{
                 display: 'flex',
-                borderBottom: '1px solid rgba(8,145,178,0.1)',
+                borderBottom: '1px solid rgba(37,99,235,0.1)',
                 flexShrink: 0, padding: '0 4px',
               }}>
                 {['Paste Source', 'On-Chain Address'].map((tab, i) => (
@@ -382,8 +383,8 @@ export default function App() {
                     style={{
                       padding: '10px 14px', fontSize: 12, fontWeight: 500,
                       cursor: 'pointer', border: 'none', outline: 'none',
-                      color: activeTab === i ? '#0891b2' : '#3a5a70',
-                      borderBottom: activeTab === i ? '2px solid #0891b2' : '2px solid transparent',
+                      color: activeTab === i ? '#3b82f6' : '#334155',
+                      borderBottom: activeTab === i ? '2px solid #2563eb' : '2px solid transparent',
                       background: 'transparent',
                       transition: 'all 0.15s', fontFamily: 'Inter, sans-serif',
                     }}
@@ -400,12 +401,12 @@ export default function App() {
                       onChange={e => setSource(e.target.value)}
                       style={{
                         width: '100%', height: '100%',
-                        background: '#040a10',
-                        color: '#5a9ab5',
+                        background: '#03060f',
+                        color: '#60a5fa',
                         fontFamily: 'JetBrains Mono, monospace',
                         fontSize: 12, lineHeight: 1.7,
                         padding: '16px 16px 16px 14px',
-                        borderLeft: '2px solid rgba(8,145,178,0.35)',
+                        borderLeft: '2px solid rgba(37,99,235,0.4)',
                         border: 'none', outline: 'none',
                         resize: 'none', display: 'block',
                       }}
@@ -417,7 +418,7 @@ export default function App() {
                 ) : (
                   <div style={{ padding: 16, display: 'flex', flexDirection: 'column', gap: 14, overflowY: 'auto', height: '100%' }}>
                     <div>
-                      <label style={{ fontSize: 10, fontWeight: 600, color: '#3a5a70', letterSpacing: '0.08em', display: 'block', marginBottom: 7, fontFamily: 'JetBrains Mono, monospace' }}>
+                      <label style={{ fontSize: 10, fontWeight: 600, color: '#334155', letterSpacing: '0.08em', display: 'block', marginBottom: 7, fontFamily: 'JetBrains Mono, monospace' }}>
                         CONTRACT ADDRESS
                       </label>
                       <div style={{ position: 'relative' }}>
@@ -425,7 +426,7 @@ export default function App() {
                           position: 'absolute', left: 11, top: '50%',
                           transform: 'translateY(-50%)',
                           fontFamily: 'JetBrains Mono, monospace',
-                          fontSize: 13, color: '#3a5a70', pointerEvents: 'none',
+                          fontSize: 13, color: '#334155', pointerEvents: 'none',
                         }}>0x</span>
                         <input
                           value={contractAddress}
@@ -433,8 +434,8 @@ export default function App() {
                           placeholder="7f3a4b8c9d2e1f0a..."
                           style={{
                             width: '100%',
-                            background: 'rgba(8,145,178,0.05)',
-                            border: '1px solid rgba(8,145,178,0.15)',
+                            background: 'rgba(37,99,235,0.05)',
+                            border: '1px solid rgba(37,99,235,0.15)',
                             borderRadius: 7,
                             padding: '10px 12px 10px 34px',
                             fontFamily: 'JetBrains Mono, monospace',
@@ -443,35 +444,35 @@ export default function App() {
                         />
                       </div>
                       {contractAddress.length > 0 && (
-                        <div style={{ marginTop: 5, fontSize: 11, color: contractAddress.length === 40 ? '#10b981' : '#4a7a96', fontFamily: 'JetBrains Mono, monospace' }}>
+                        <div style={{ marginTop: 5, fontSize: 11, color: contractAddress.length === 40 ? '#10b981' : '#475569', fontFamily: 'JetBrains Mono, monospace' }}>
                           {contractAddress.length === 40 ? '✓ valid address' : `${40 - contractAddress.length} more chars`}
                         </div>
                       )}
                     </div>
 
                     <div>
-                      <label style={{ fontSize: 10, fontWeight: 600, color: '#3a5a70', letterSpacing: '0.08em', display: 'block', marginBottom: 7, fontFamily: 'JetBrains Mono, monospace' }}>
+                      <label style={{ fontSize: 10, fontWeight: 600, color: '#334155', letterSpacing: '0.08em', display: 'block', marginBottom: 7, fontFamily: 'JetBrains Mono, monospace' }}>
                         NETWORK
                       </label>
                       <select style={{
                         width: '100%',
-                        background: 'rgba(8,145,178,0.05)',
-                        border: '1px solid rgba(8,145,178,0.15)',
+                        background: 'rgba(37,99,235,0.05)',
+                        border: '1px solid rgba(37,99,235,0.15)',
                         borderRadius: 7,
                         padding: '10px 12px', fontSize: 12,
                         color: '#e2f0f7', outline: 'none',
                       }}>
-                        <option style={{ background: '#060d14' }}>Hedera Testnet</option>
-                        <option style={{ background: '#060d14' }}>Ethereum Mainnet</option>
-                        <option style={{ background: '#060d14' }}>Base</option>
+                        <option style={{ background: '#060b18' }}>Hedera Testnet</option>
+                        <option style={{ background: '#060b18' }}>Ethereum Mainnet</option>
+                        <option style={{ background: '#060b18' }}>Base</option>
                       </select>
                     </div>
 
                     <div style={{
-                      background: 'rgba(8,145,178,0.05)',
-                      border: '1px solid rgba(8,145,178,0.12)',
+                      background: 'rgba(37,99,235,0.05)',
+                      border: '1px solid rgba(37,99,235,0.12)',
                       borderRadius: 7, padding: '10px 12px',
-                      fontSize: 11.5, color: '#4a7a96', lineHeight: 1.6,
+                      fontSize: 11.5, color: '#475569', lineHeight: 1.6,
                     }}>
                       The scanner will fetch the verified Solidity source from the block explorer and analyze it in real time.
                     </div>
@@ -486,14 +487,14 @@ export default function App() {
                 display: 'inline-flex', alignItems: 'center', gap: 5,
                 borderRadius: 6, padding: '4px 10px', fontSize: 10,
                 fontWeight: 600, fontFamily: 'JetBrains Mono, monospace',
-                background: 'rgba(6,13,20,0.8)',
-                border: '1px solid rgba(8,145,178,0.12)',
-                color: status === 'ACTIVE' ? '#10b981' : status === 'CLOSED' ? '#0891b2' : '#3a5a70',
+                background: 'rgba(6,11,24,0.85)',
+                border: '1px solid rgba(37,99,235,0.12)',
+                color: status === 'ACTIVE' ? '#10b981' : status === 'CLOSED' ? '#3b82f6' : '#334155',
               }}>
                 {status === 'ACTIVE' && <div className="pulse-dot" style={{ width: 5, height: 5, borderRadius: '50%', background: '#10b981' }}/>}
                 {status}
               </div>
-              <span style={{ fontSize: 11, color: '#1e3a4a', fontFamily: 'JetBrains Mono, monospace' }}>
+              <span style={{ fontSize: 11, color: '#1e293b', fontFamily: 'JetBrains Mono, monospace' }}>
                 audit.audithor.eth
               </span>
             </div>
@@ -501,15 +502,15 @@ export default function App() {
             {/* Run button */}
             <button onClick={handleRunAudit} style={{
               background: status === 'ACTIVE'
-                ? 'rgba(8,145,178,0.15)'
-                : 'linear-gradient(135deg, #0891b2, #0e7490)',
-              color: status === 'ACTIVE' ? '#0891b2' : 'white',
-              border: status === 'ACTIVE' ? '1px solid rgba(8,145,178,0.3)' : '1px solid transparent',
+                ? 'rgba(37,99,235,0.12)'
+                : 'linear-gradient(135deg, #2563eb, #1d4ed8)',
+              color: status === 'ACTIVE' ? '#3b82f6' : 'white',
+              border: status === 'ACTIVE' ? '1px solid rgba(37,99,235,0.3)' : '1px solid transparent',
               borderRadius: 9,
               padding: '13px 24px', fontSize: 14, fontWeight: 700,
               cursor: status === 'ACTIVE' ? 'not-allowed' : 'pointer',
               fontFamily: 'Inter, sans-serif', letterSpacing: '-0.01em',
-              boxShadow: status === 'ACTIVE' ? 'none' : '0 4px 20px rgba(8,145,178,0.3)',
+              boxShadow: status === 'ACTIVE' ? 'none' : '0 4px 20px rgba(37,99,235,0.35)',
               animation: status === 'ACTIVE' ? 'btnGlow 2s infinite' : 'none',
               display: 'flex', alignItems: 'center',
               justifyContent: 'center', gap: 8, width: '100%',
@@ -534,21 +535,21 @@ export default function App() {
               <div style={{
                 flex: 1, display: 'flex', flexDirection: 'column',
                 alignItems: 'center', justifyContent: 'center',
-                background: 'rgba(8,145,178,0.03)',
-                border: '1px dashed rgba(8,145,178,0.12)',
+                background: 'rgba(37,99,235,0.03)',
+                border: '1px dashed rgba(37,99,235,0.12)',
                 borderRadius: 12, gap: 16,
               }}>
                 <div style={{ width: 56, height: 56, position: 'relative', opacity: 0.25 }}>
-                  <div style={{ position: 'absolute', top: 0, left: 0, width: 16, height: 16, borderTop: '2px solid #0891b2', borderLeft: '2px solid #0891b2' }}/>
-                  <div style={{ position: 'absolute', top: 0, right: 0, width: 16, height: 16, borderTop: '2px solid #0891b2', borderRight: '2px solid #0891b2' }}/>
-                  <div style={{ position: 'absolute', bottom: 0, left: 0, width: 16, height: 16, borderBottom: '2px solid #0891b2', borderLeft: '2px solid #0891b2' }}/>
-                  <div style={{ position: 'absolute', bottom: 0, right: 0, width: 16, height: 16, borderBottom: '2px solid #0891b2', borderRight: '2px solid #0891b2' }}/>
-                  <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%,-50%)', width: 8, height: 8, borderRadius: '50%', background: '#10b981' }}/>
+                  <div style={{ position: 'absolute', top: 0, left: 0, width: 16, height: 16, borderTop: '2px solid #2563eb', borderLeft: '2px solid #2563eb' }}/>
+                  <div style={{ position: 'absolute', top: 0, right: 0, width: 16, height: 16, borderTop: '2px solid #2563eb', borderRight: '2px solid #2563eb' }}/>
+                  <div style={{ position: 'absolute', bottom: 0, left: 0, width: 16, height: 16, borderBottom: '2px solid #2563eb', borderLeft: '2px solid #2563eb' }}/>
+                  <div style={{ position: 'absolute', bottom: 0, right: 0, width: 16, height: 16, borderBottom: '2px solid #2563eb', borderRight: '2px solid #2563eb' }}/>
+                  <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%,-50%)', width: 8, height: 8, borderRadius: '50%', background: '#3b82f6' }}/>
                 </div>
-                <div style={{ textAlign: 'center', fontSize: 13, color: '#4a7a96', lineHeight: 1.6 }}>
+                <div style={{ textAlign: 'center', fontSize: 13, color: '#475569', lineHeight: 1.6 }}>
                   Launch an audit to see<br/>vulnerability findings
                 </div>
-                <div style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 10, color: '#1e3a4a' }}>
+                <div style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 10, color: '#1e293b' }}>
                   audit.audithor.eth
                 </div>
               </div>
@@ -556,40 +557,35 @@ export default function App() {
               /* Findings panel */
               <div style={{ display: 'flex', flexDirection: 'column', gap: 12, minHeight: 0, height: '100%' }}>
 
-                {/* Severity counters */}
+                {/* MagicBento severity counters */}
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr 1fr', gap: 8, flexShrink: 0 }}>
                   {([
-                    { key: 'CRITICAL', label: 'Critical', color: '#ef4444', bg: 'rgba(239,68,68,0.06)', border: 'rgba(239,68,68,0.15)' },
-                    { key: 'HIGH',     label: 'High',     color: '#f97316', bg: 'rgba(249,115,22,0.06)', border: 'rgba(249,115,22,0.15)' },
-                    { key: 'MEDIUM',   label: 'Medium',   color: '#f59e0b', bg: 'rgba(245,158,11,0.06)', border: 'rgba(245,158,11,0.15)' },
-                    { key: 'LOW',      label: 'Low',      color: '#0891b2', bg: 'rgba(8,145,178,0.06)',  border: 'rgba(8,145,178,0.15)' },
+                    { key: 'CRITICAL', label: 'Critical', color: '#ef4444', glow: '239,68,68' },
+                    { key: 'HIGH',     label: 'High',     color: '#f97316', glow: '249,115,22' },
+                    { key: 'MEDIUM',   label: 'Medium',   color: '#f59e0b', glow: '245,158,11' },
+                    { key: 'LOW',      label: 'Low',      color: '#3b82f6', glow: '59,130,246' },
                   ] as const).map(s => (
-                    <div key={s.key} style={{
-                      background: s.bg,
-                      border: `1px solid ${s.border}`,
-                      borderRadius: 8, padding: '10px 12px',
-                      borderTop: `2px solid ${s.color}`,
-                    }}>
-                      <div style={{ fontSize: 20, fontWeight: 700, color: s.color, fontFamily: 'JetBrains Mono, monospace', lineHeight: 1 }}>
+                    <BentoCard key={s.key} glowColor={s.glow} style={{ borderTop: `2px solid ${s.color}`, padding: '10px 12px' }}>
+                      <div style={{ fontSize: 22, fontWeight: 900, color: s.color, fontFamily: 'JetBrains Mono, monospace', lineHeight: 1 }}>
                         {sevCounts[s.key]}
                       </div>
-                      <div style={{ fontSize: 10, color: '#3a5a70', fontWeight: 500, marginTop: 4, letterSpacing: '0.04em' }}>
+                      <div style={{ fontSize: 10, color: '#475569', fontWeight: 600, marginTop: 5, letterSpacing: '0.05em' }}>
                         {s.label}
                       </div>
-                    </div>
+                    </BentoCard>
                   ))}
                 </div>
 
                 {/* Findings list */}
                 <div style={{
-                  flex: 1, background: 'rgba(6,13,20,0.8)',
-                  border: '1px solid rgba(8,145,178,0.12)',
+                  flex: 1, background: 'rgba(6,11,24,0.85)',
+                  border: '1px solid rgba(37,99,235,0.12)',
                   borderRadius: 12, overflow: 'hidden',
                   display: 'flex', flexDirection: 'column', minHeight: 0,
                 }}>
                   <div style={{
                     padding: '12px 14px',
-                    borderBottom: '1px solid rgba(8,145,178,0.1)',
+                    borderBottom: '1px solid rgba(37,99,235,0.1)',
                     display: 'flex', alignItems: 'center', justifyContent: 'space-between',
                     flexShrink: 0,
                   }}>
@@ -597,7 +593,7 @@ export default function App() {
                       Security Findings
                       {findings.length > 0 && (
                         <span style={{
-                          marginLeft: 8, background: '#0891b2', color: 'white',
+                          marginLeft: 8, background: '#2563eb', color: 'white',
                           borderRadius: 5, padding: '1px 7px', fontSize: 10, fontWeight: 700,
                         }}>{findings.length}</span>
                       )}
@@ -630,10 +626,10 @@ export default function App() {
         <div style={{
           position: 'fixed', bottom: 0, left: 0, right: 0,
           height: 80,
-          background: 'rgba(6,13,20,0.95)',
+          background: 'rgba(6,11,24,0.95)',
           backdropFilter: 'blur(12px)',
           WebkitBackdropFilter: 'blur(12px)',
-          borderTop: '1px solid rgba(8,145,178,0.1)',
+          borderTop: '1px solid rgba(37,99,235,0.1)',
           zIndex: 100, padding: '10px 24px',
           display: 'flex', flexDirection: 'column', gap: 7,
         }}>
@@ -641,10 +637,10 @@ export default function App() {
           <div style={{ display: 'flex', alignItems: 'center', gap: 18 }}>
 
             <div style={{ flexShrink: 0, minWidth: 120 }}>
-              <div style={{ fontSize: 17, fontWeight: 700, lineHeight: 1, color: '#0891b2' }}>
+              <div style={{ fontSize: 17, fontWeight: 700, lineHeight: 1, color: '#2563eb' }}>
                 <NanoCounter value={totalConsumed} />
               </div>
-              <div style={{ fontSize: 10, color: '#3a5a70', marginTop: 2, fontFamily: 'JetBrains Mono, monospace' }}>
+              <div style={{ fontSize: 10, color: '#334155', marginTop: 2, fontFamily: 'JetBrains Mono, monospace' }}>
                 {status === 'ACTIVE'
                   ? `$0.000080/s · World ID -20%`
                   : status === 'CLOSED'
@@ -658,17 +654,17 @@ export default function App() {
             <div style={{ flex: 1 }}>
               {status === 'IDLE' ? (
                 <div style={{
-                  height: 4, background: 'rgba(8,145,178,0.08)', borderRadius: 2,
-                  border: '1px dashed rgba(8,145,178,0.15)',
+                  height: 4, background: 'rgba(37,99,235,0.08)', borderRadius: 2,
+                  border: '1px dashed rgba(37,99,235,0.15)',
                 }}/>
               ) : (
                 <div style={{
-                  height: 4, background: 'rgba(8,145,178,0.08)', borderRadius: 2,
+                  height: 4, background: 'rgba(37,99,235,0.08)', borderRadius: 2,
                   position: 'relative', overflow: 'visible',
                 }}>
                   <div style={{
                     height: '100%', borderRadius: 2,
-                    background: 'linear-gradient(90deg, #0e7490, #0891b2)',
+                    background: 'linear-gradient(90deg, #1d4ed8, #2563eb, #3b82f6)',
                     width: `${Math.min(consumedRatio * 100, 100)}%`,
                     transition: 'width 1s linear', position: 'relative',
                   }}>
@@ -676,7 +672,7 @@ export default function App() {
                       <div className="cost-dot" style={{
                         position: 'absolute', right: -5, top: '50%',
                         width: 9, height: 9, borderRadius: '50%',
-                        background: '#0891b2',
+                        background: '#3b82f6',
                       }}/>
                     )}
                   </div>
@@ -690,26 +686,26 @@ export default function App() {
               opacity: status === 'IDLE' ? 0.25 : 1, transition: 'opacity 0.3s',
             }}>
               <div style={{ textAlign: 'center' }}>
-                <div style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 13, fontWeight: 700, color: '#0891b2' }}>
+                <div style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 13, fontWeight: 700, color: '#2563eb' }}>
                   {authCount}
                 </div>
-                <div style={{ fontSize: 9, color: '#3a5a70', letterSpacing: '0.06em', textTransform: 'uppercase' as const }}>sigs</div>
+                <div style={{ fontSize: 9, color: '#334155', letterSpacing: '0.06em', textTransform: 'uppercase' as const }}>sigs</div>
               </div>
-              <div style={{ width: 1, height: 20, background: 'rgba(8,145,178,0.15)' }}/>
+              <div style={{ width: 1, height: 20, background: 'rgba(37,99,235,0.15)' }}/>
               <div style={{ textAlign: 'center' }}>
                 <div style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 13, fontWeight: 700, color: timeColor }}>
                   {status === 'IDLE' ? '--' : `${timeRemaining}s`}
                 </div>
-                <div style={{ fontSize: 9, color: '#3a5a70', letterSpacing: '0.06em', textTransform: 'uppercase' as const }}>left</div>
+                <div style={{ fontSize: 9, color: '#334155', letterSpacing: '0.06em', textTransform: 'uppercase' as const }}>left</div>
               </div>
               {status === 'CLOSED' && (
                 <>
-                  <div style={{ width: 1, height: 20, background: 'rgba(8,145,178,0.15)' }}/>
+                  <div style={{ width: 1, height: 20, background: 'rgba(37,99,235,0.15)' }}/>
                   <div style={{ textAlign: 'center' }}>
                     <div style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 11, fontWeight: 700, color: '#10b981' }}>
                       {formatUSDC(BigInt(1000000) - totalConsumed)}
                     </div>
-                    <div style={{ fontSize: 9, color: '#3a5a70', letterSpacing: '0.06em', textTransform: 'uppercase' as const }}>refund</div>
+                    <div style={{ fontSize: 9, color: '#334155', letterSpacing: '0.06em', textTransform: 'uppercase' as const }}>refund</div>
                   </div>
                 </>
               )}
@@ -722,28 +718,28 @@ export default function App() {
             alignItems: 'center', height: 20,
           }}>
             {status === 'IDLE' ? (
-              <span style={{ fontSize: 10, color: '#1e3a4a', fontFamily: 'JetBrains Mono, monospace' }}>
+              <span style={{ fontSize: 10, color: '#1e293b', fontFamily: 'JetBrains Mono, monospace' }}>
                 — nanopayment stream will appear here
               </span>
             ) : nanoTxs.map((tx, i) => (
               <div key={tx.id} style={{
                 display: 'inline-flex', alignItems: 'center', gap: 5,
-                background: 'rgba(8,145,178,0.08)',
-                border: '1px solid rgba(8,145,178,0.15)',
+                background: 'rgba(37,99,235,0.08)',
+                border: '1px solid rgba(37,99,235,0.15)',
                 borderRadius: 5, padding: '2px 8px', flexShrink: 0,
                 animation: i === 0 ? 'txIn 0.25s ease forwards' : 'none',
                 opacity: Math.max(0.2, 1 - i * 0.1),
               }}>
                 <div style={{
                   width: 4, height: 4, borderRadius: '50%',
-                  background: i === 0 ? '#0891b2' : '#0e7490', flexShrink: 0,
+                  background: i === 0 ? '#2563eb' : '#1d4ed8', flexShrink: 0,
                 }}/>
                 <span style={{
                   fontFamily: 'JetBrains Mono, monospace', fontSize: 9,
-                  fontWeight: 600, color: '#0891b2',
+                  fontWeight: 600, color: '#2563eb',
                 }}>{tx.amount}</span>
                 <span style={{
-                  fontFamily: 'JetBrains Mono, monospace', fontSize: 9, color: '#3a5a70',
+                  fontFamily: 'JetBrains Mono, monospace', fontSize: 9, color: '#334155',
                 }}>{tx.time}</span>
               </div>
             ))}
