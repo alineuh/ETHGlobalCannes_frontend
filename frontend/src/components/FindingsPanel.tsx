@@ -54,11 +54,12 @@ export function FindingsPanel({ findings, status }: Props) {
         flexDirection: 'column',
       }}
     >
-      {/* Title bar */}
+      {/* Title bar — subtle, light */}
       <div
         style={{
-          background: 'linear-gradient(135deg, #4f6ef7 0%, #7c3aed 100%)',
-          padding: '16px 20px',
+          background: 'linear-gradient(135deg, #f0f2ff, #f5f3ff)',
+          borderLeft: '3px solid #4f6ef7',
+          padding: '14px 20px',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
@@ -67,11 +68,13 @@ export function FindingsPanel({ findings, status }: Props) {
         <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
           <span
             style={{
-              color: 'white',
               fontWeight: 700,
-              fontSize: 14,
+              fontSize: 13,
               letterSpacing: '0.05em',
               textTransform: 'uppercase',
+              background: 'linear-gradient(135deg, #4f6ef7, #7c3aed)',
+              WebkitBackgroundClip: 'text',
+              WebkitTextFillColor: 'transparent',
             }}
           >
             Vulnerability Findings
@@ -83,7 +86,7 @@ export function FindingsPanel({ findings, status }: Props) {
                 width: 8,
                 height: 8,
                 borderRadius: '50%',
-                background: '#86efac',
+                background: '#22c55e',
                 display: 'inline-block',
               }}
             />
@@ -92,8 +95,8 @@ export function FindingsPanel({ findings, status }: Props) {
         {findings.length > 0 && (
           <span
             style={{
-              background: 'white',
-              color: '#4f6ef7',
+              background: 'linear-gradient(135deg, #4f6ef7, #7c3aed)',
+              color: 'white',
               borderRadius: '50px',
               padding: '2px 10px',
               fontSize: 12,
@@ -109,14 +112,7 @@ export function FindingsPanel({ findings, status }: Props) {
       <div style={{ padding: 16, overflowY: 'auto', maxHeight: 440, flex: 1 }}>
         {/* Empty states */}
         {findings.length === 0 && status === 'IDLE' && (
-          <div
-            style={{
-              padding: 40,
-              textAlign: 'center',
-              color: '#94a3b8',
-              fontSize: 14,
-            }}
-          >
+          <div style={{ padding: 40, textAlign: 'center', color: '#94a3b8', fontSize: 14 }}>
             <div style={{ fontSize: 32, marginBottom: 12 }}>🔍</div>
             Submit a contract to begin scanning
           </div>
@@ -176,10 +172,7 @@ export function FindingsPanel({ findings, status }: Props) {
                   {finding.title}
                 </span>
               </div>
-              <div
-                className="mono"
-                style={{ color: '#94a3b8', fontSize: 11, marginBottom: 4 }}
-              >
+              <div className="mono" style={{ color: '#94a3b8', fontSize: 11, marginBottom: 4 }}>
                 #{finding.line}
               </div>
               <div style={{ color: '#64748b', fontSize: 13 }}>

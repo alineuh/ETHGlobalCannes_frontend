@@ -37,10 +37,17 @@ export function ContractInput({ value, onChange }: Props) {
       style={{
         background: 'white',
         borderRadius: 16,
-        boxShadow: '0 1px 3px rgba(0,0,0,0.08), 0 8px 24px rgba(79,110,247,0.06)',
+        boxShadow: '0 2px 8px rgba(0,0,0,0.06), 0 8px 24px rgba(79,110,247,0.08)',
         overflow: 'hidden',
       }}
     >
+      {/* Top gradient accent line */}
+      <div style={{
+        height: 3,
+        background: 'linear-gradient(90deg, #4f6ef7, #7c3aed)',
+        borderRadius: '16px 16px 0 0',
+      }} />
+
       {/* Tabs bar */}
       <div
         style={{

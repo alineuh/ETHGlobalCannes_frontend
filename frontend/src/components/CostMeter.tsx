@@ -38,14 +38,6 @@ export function CostMeter({
     effectiveRate > 0n ? Number(deposit / effectiveRate) : 0
   const timeRatio = totalTime > 0 ? Math.min(timeRemaining / totalTime, 1) : 0
 
-  // Interpolate blue→red for time bar
-  const timeBarColor =
-    timeRatio > 0.5
-      ? '#3b82f6'
-      : timeRatio > 0.2
-      ? '#f97316'
-      : '#ef4444'
-
   const timeColor =
     timeRemaining < 10 ? '#ef4444' : timeRemaining < 30 ? '#f59e0b' : '#22c55e'
 
@@ -56,29 +48,37 @@ export function CostMeter({
         bottom: 0,
         left: 0,
         right: 0,
+        height: 72,
         background: 'white',
-        borderTop: '1px solid #e8eaf6',
-        boxShadow: '0 -4px 20px rgba(79,110,247,0.08)',
-        zIndex: 50,
-        padding: '12px 24px',
+        borderTop: '2px solid #e8eaf6',
+        boxShadow: '0 -4px 24px rgba(79,110,247,0.1)',
+        zIndex: 100,
+        display: 'flex',
+        alignItems: 'center',
+        padding: '0 48px',
+        gap: 24,
       }}
     >
       {!isActive ? (
-        <div style={{ display: 'flex', alignItems: 'center', gap: 16, color: '#94a3b8', fontSize: 13 }}>
-          <span style={{ fontWeight: 600 }}>KronoScan Payment Stream</span>
-          <span>Ready — click Run Audit to begin</span>
-        </div>
+        <>
+          <span style={{ fontSize: 13, fontWeight: 600, color: '#94a3b8', whiteSpace: 'nowrap' }}>
+            KronoScan Payment Stream
+          </span>
+          <div style={{
+            flex: 1,
+            height: 6,
+            background: '#f0f2ff',
+            borderRadius: 3,
+            border: '1px dashed #c7d2fe',
+          }} />
+          <span style={{ fontSize: 13, color: '#94a3b8', whiteSpace: 'nowrap' }}>
+            Ready — click Run Audit to begin
+          </span>
+        </>
       ) : (
-        <div
-          style={{
-            display: 'grid',
-            gridTemplateColumns: 'auto 1fr auto auto',
-            gap: 20,
-            alignItems: 'center',
-          }}
-        >
+        <>
           {/* Left: cost amount */}
-          <div>
+          <div style={{ whiteSpace: 'nowrap' }}>
             <div
               className="mono"
               style={{
@@ -96,10 +96,11 @@ export function CostMeter({
             </div>
           </div>
 
-          {/* Center: streaming progress bar */}
-          <div>
+          {/* Center: streaming progress bar — flex-1 to fill remaining space */}
+          <div style={{ flex: 1, position: 'relative' }}>
             <div
               style={{
+                width: '100%',
                 height: 8,
                 background: '#f0f2ff',
                 borderRadius: 4,
@@ -138,12 +139,9 @@ export function CostMeter({
             </div>
           </div>
 
-          {/* Right: time remaining */}
-          <div style={{ textAlign: 'right' }}>
-            <div
-              className="mono"
-              style={{ fontSize: 16, fontWeight: 700, color: timeColor }}
-            >
+          {/* Time remaining */}
+          <div style={{ textAlign: 'right', whiteSpace: 'nowrap' }}>
+            <div className="mono" style={{ fontSize: 16, fontWeight: 700, color: timeColor }}>
               {timeRemaining}s
             </div>
             <div style={{ fontSize: 11, color: '#94a3b8' }}>remaining</div>
@@ -157,17 +155,15 @@ export function CostMeter({
               borderRadius: 8,
               padding: '6px 12px',
               textAlign: 'center',
+              whiteSpace: 'nowrap',
             }}
           >
-            <div
-              className="mono"
-              style={{ fontSize: 14, fontWeight: 700, color: '#4f6ef7' }}
-            >
+            <div className="mono" style={{ fontSize: 14, fontWeight: 700, color: '#4f6ef7' }}>
               {authCount}
             </div>
             <div style={{ fontSize: 10, color: '#94a3b8' }}>auth sigs</div>
           </div>
-        </div>
+        </>
       )}
     </div>
   )
