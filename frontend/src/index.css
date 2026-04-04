@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Inter:wght@400;500;600;700&display=swap');
 
 @theme {
   --color-arc-blue: #3b82f6;
@@ -9,19 +10,30 @@
   --color-dark: #0a0a0f;
 }
 
+* { box-sizing: border-box; }
+
 body {
-  background-color: #0a0a0f;
-  color: #ffffff;
+  background: #080810;
+  color: #e2e8f0;
+  font-family: 'Inter', sans-serif;
   margin: 0;
 }
 
-#root {
-  width: 100%;
-  min-height: 100svh;
+.mono { font-family: 'JetBrains Mono', monospace; }
+
+@keyframes scanline {
+  0% { transform: translateY(-100%); }
+  100% { transform: translateY(100vh); }
 }
 
-.mono {
-  font-family: ui-monospace, Menlo, Monaco, Consolas, "Courier New", monospace;
+@keyframes findingEnter {
+  from { opacity: 0; transform: translateX(-8px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes pulse-glow {
+  0%, 100% { box-shadow: 0 0 8px rgba(59, 130, 246, 0.3); }
+  50% { box-shadow: 0 0 20px rgba(59, 130, 246, 0.6); }
 }
 
 @keyframes pulse-opacity {
@@ -29,21 +41,18 @@ body {
   50% { opacity: 0.4; }
 }
 
-@keyframes slide-in {
-  from {
-    opacity: 0;
-    transform: translateY(8px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+.finding-enter {
+  animation: findingEnter 0.3s ease forwards;
 }
 
 .animate-pulse-text {
   animation: pulse-opacity 2s ease-in-out infinite;
 }
 
-.finding-enter {
-  animation: slide-in 0.3s ease-out forwards;
+.glow-blue {
+  animation: pulse-glow 2s ease-in-out infinite;
 }
+
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: #0a0a14; }
+::-webkit-scrollbar-thumb { background: #2a2a3e; border-radius: 2px; }

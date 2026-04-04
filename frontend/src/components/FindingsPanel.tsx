@@ -5,25 +5,44 @@ interface Props {
   status: StreamStatus
 }
 
-const severityStyles: Record<Severity, { border: string; badge: string; label: string }> = {
+const severityConfig: Record<
+  Severity,
+  { borderColor: string; bgGradient: string; boxShadow: string; badgeBg: string; badgeText: string; badgeGlow: string; label: string }
+> = {
   CRITICAL: {
-    border: 'border-l-critical',
-    badge: 'bg-critical text-white',
+    borderColor: '#ef4444',
+    bgGradient: 'linear-gradient(90deg, rgba(239,68,68,0.08) 0%, transparent 100%)',
+    boxShadow: 'inset 0 0 20px rgba(239,68,68,0.05)',
+    badgeBg: '#ef4444',
+    badgeText: '#ffffff',
+    badgeGlow: '0 0 10px rgba(239,68,68,0.4)',
     label: 'CRITICAL',
   },
   HIGH: {
-    border: 'border-l-high',
-    badge: 'bg-high text-white',
+    borderColor: '#f97316',
+    bgGradient: 'linear-gradient(90deg, rgba(249,115,22,0.08) 0%, transparent 100%)',
+    boxShadow: 'inset 0 0 20px rgba(249,115,22,0.05)',
+    badgeBg: '#f97316',
+    badgeText: '#ffffff',
+    badgeGlow: '0 0 10px rgba(249,115,22,0.4)',
     label: 'HIGH',
   },
   MEDIUM: {
-    border: 'border-l-medium',
-    badge: 'bg-medium text-black',
+    borderColor: '#eab308',
+    bgGradient: 'linear-gradient(90deg, rgba(234,179,8,0.08) 0%, transparent 100%)',
+    boxShadow: 'inset 0 0 20px rgba(234,179,8,0.05)',
+    badgeBg: '#eab308',
+    badgeText: '#000000',
+    badgeGlow: '0 0 10px rgba(234,179,8,0.4)',
     label: 'MEDIUM',
   },
   LOW: {
-    border: 'border-l-low',
-    badge: 'bg-low text-white',
+    borderColor: '#60a9fa',
+    bgGradient: 'linear-gradient(90deg, rgba(96,169,250,0.08) 0%, transparent 100%)',
+    boxShadow: 'inset 0 0 20px rgba(96,169,250,0.05)',
+    badgeBg: '#60a9fa',
+    badgeText: '#ffffff',
+    badgeGlow: '0 0 10px rgba(96,169,250,0.4)',
     label: 'LOW',
   },
 }
@@ -38,6 +57,9 @@ export function FindingsPanel({ findings, status }: Props) {
         <h2 className="text-sm font-semibold text-gray-400 uppercase tracking-wider">
           Vulnerability Findings
         </h2>
+        {status === 'ACTIVE' && (
+          <span className="inline-block w-2 h-2 rounded-full bg-green-400 animate-pulse" />
+        )}
         {findings.length > 0 && (
           <span className="inline-flex items-center justify-center rounded-full bg-arc-blue px-2 py-0.5 text-xs font-bold text-white min-w-[1.25rem]">
             {findings.length}
@@ -62,20 +84,40 @@ export function FindingsPanel({ findings, status }: Props) {
 
       {/* Finding cards */}
       {reversed.map((finding, i) => {
-        const styles = severityStyles[finding.severity]
+        const cfg = severityConfig[finding.severity]
         return (
           <div
             key={`${finding.title}-${finding.line}-${i}`}
-            className={`finding-enter rounded-r-lg border-l-4 ${styles.border} bg-[#0d0d16] border border-[#1e1e2e] border-l-0 p-4 space-y-2`}
-            style={{ animationDelay: `${i * 20}ms` }}
+            className="finding-enter rounded-r-lg p-4 space-y-2 transition-all duration-150 group"
+            style={{
+              borderLeft: `4px solid ${cfg.borderColor}`,
+              background: cfg.bgGradient,
+              boxShadow: cfg.boxShadow,
+              border: `1px solid #1a1a2e`,
+              borderLeftColor: cfg.borderColor,
+              borderLeftWidth: '4px',
+              animationDelay: `${i * 20}ms`,
+            }}
           >
             <div className="flex items-center gap-2 flex-wrap">
-              <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-bold ${styles.badge}`}>
-                {styles.label}
+              <span
+                className="inline-flex items-center rounded px-2.5 py-1 text-xs font-bold tracking-wide"
+                style={{
+                  background: cfg.badgeBg,
+                  color: cfg.badgeText,
+                  boxShadow: cfg.badgeGlow,
+                }}
+              >
+                {cfg.label}
               </span>
-              <span className="font-semibold text-white text-sm">{finding.title}</span>
+              <span
+                className="font-semibold text-white text-sm"
+                style={{ letterSpacing: '-0.01em' }}
+              >
+                {finding.title}
+              </span>
             </div>
-            <div className="mono text-xs text-gray-500">Line {finding.line}</div>
+            <div className="mono text-xs text-gray-500">#{finding.line}</div>
             <div className="text-sm text-gray-400">{finding.description}</div>
           </div>
         )

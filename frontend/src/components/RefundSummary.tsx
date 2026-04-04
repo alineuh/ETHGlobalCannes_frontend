@@ -22,30 +22,53 @@ export function RefundSummary({ consumed, refunded, duration, findings }: Props)
   }
 
   return (
-    <div className="rounded-lg border border-[#1e1e2e] bg-[#0d0d16] p-4 space-y-4">
+    <div
+      className="rounded-lg p-4 space-y-4"
+      style={{
+        border: '2px solid #16a34a',
+        background: 'linear-gradient(135deg, #051a0d 0%, #080810 100%)',
+        boxShadow: '0 -4px 20px rgba(34,197,94,0.1)',
+      }}
+    >
       {/* Header */}
       <div className="flex items-center gap-2">
-        <span className="text-green-400 text-lg">✓</span>
-        <h2 className="text-base font-semibold text-green-400">Audit Complete</h2>
+        <h2
+          className="text-lg font-bold text-green-400"
+          style={{ textShadow: '0 0 20px rgba(34,197,94,0.5)' }}
+        >
+          ✓ Audit Complete
+        </h2>
       </div>
 
       {/* Severity counts 2x2 grid */}
       <div className="grid grid-cols-2 gap-2">
-        <div className="rounded bg-[#111118] border border-[#1e1e2e] p-3 flex items-center justify-between">
-          <span className="text-xs text-gray-500">CRITICAL</span>
-          <span className="mono font-bold text-critical">{counts.CRITICAL}</span>
+        <div
+          className="rounded p-3 text-center"
+          style={{ background: '#0a0a14', border: '1px solid #1a1a2e' }}
+        >
+          <div className="mono text-2xl font-bold text-critical">{counts.CRITICAL}</div>
+          <div className="text-xs text-gray-500 mt-1">CRITICAL</div>
         </div>
-        <div className="rounded bg-[#111118] border border-[#1e1e2e] p-3 flex items-center justify-between">
-          <span className="text-xs text-gray-500">HIGH</span>
-          <span className="mono font-bold text-high">{counts.HIGH}</span>
+        <div
+          className="rounded p-3 text-center"
+          style={{ background: '#0a0a14', border: '1px solid #1a1a2e' }}
+        >
+          <div className="mono text-2xl font-bold text-high">{counts.HIGH}</div>
+          <div className="text-xs text-gray-500 mt-1">HIGH</div>
         </div>
-        <div className="rounded bg-[#111118] border border-[#1e1e2e] p-3 flex items-center justify-between">
-          <span className="text-xs text-gray-500">MEDIUM</span>
-          <span className="mono font-bold text-medium">{counts.MEDIUM}</span>
+        <div
+          className="rounded p-3 text-center"
+          style={{ background: '#0a0a14', border: '1px solid #1a1a2e' }}
+        >
+          <div className="mono text-2xl font-bold text-medium">{counts.MEDIUM}</div>
+          <div className="text-xs text-gray-500 mt-1">MEDIUM</div>
         </div>
-        <div className="rounded bg-[#111118] border border-[#1e1e2e] p-3 flex items-center justify-between">
-          <span className="text-xs text-gray-500">LOW</span>
-          <span className="mono font-bold text-low">{counts.LOW}</span>
+        <div
+          className="rounded p-3 text-center"
+          style={{ background: '#0a0a14', border: '1px solid #1a1a2e' }}
+        >
+          <div className="mono text-2xl font-bold text-low">{counts.LOW}</div>
+          <div className="text-xs text-gray-500 mt-1">LOW</div>
         </div>
       </div>
 
@@ -55,12 +78,12 @@ export function RefundSummary({ consumed, refunded, duration, findings }: Props)
           <div className="mono font-bold text-white">{duration}s</div>
           <div className="text-xs text-gray-500">Duration</div>
         </div>
-        <div className="w-px h-8 bg-[#1e1e2e]" />
+        <div className="w-px h-8" style={{ background: '#1a1a2e' }} />
         <div className="text-center">
           <div className="mono font-bold text-white">{formatUSDC(consumed)}</div>
           <div className="text-xs text-gray-500">Consumed</div>
         </div>
-        <div className="w-px h-8 bg-[#1e1e2e]" />
+        <div className="w-px h-8" style={{ background: '#1a1a2e' }} />
         <div className="text-center">
           <div className="mono font-bold text-green-400">{formatUSDC(refunded)}</div>
           <div className="text-xs text-gray-500">Refunded</div>
@@ -68,25 +91,37 @@ export function RefundSummary({ consumed, refunded, duration, findings }: Props)
       </div>
 
       {/* Comparison box */}
-      <div className="rounded border border-arc-blue/40 bg-arc-blue/5 p-3 space-y-1">
+      <div
+        className="rounded p-3 space-y-1.5"
+        style={{ background: '#050508', border: '1px solid #1e3a5f' }}
+      >
         <div className="flex items-center justify-between text-sm">
-          <span className="text-gray-400">Traditional audit</span>
-          <span className="mono text-gray-400">$5,000+ / 2 weeks</span>
+          <span className="text-gray-500 line-through">Traditional audit</span>
+          <span className="mono text-gray-500 line-through">$5,000+ / 2 weeks</span>
         </div>
         <div className="flex items-center justify-between text-sm">
-          <span className="text-white font-medium">KronoScan</span>
-          <span className="mono text-arc-blue font-medium">
+          <span className="text-green-400 font-bold">KronoScan</span>
+          <span
+            className="mono font-bold text-green-400"
+            style={{ textShadow: '0 0 10px rgba(34,197,94,0.4)' }}
+          >
             {formatUSDC(consumed)} / {duration} seconds
           </span>
         </div>
       </div>
 
       {/* Links */}
-      <div className="flex gap-4 text-xs text-gray-500">
-        <a href="#" className="hover:text-arc-blue transition-colors">
+      <div className="flex gap-4 text-xs">
+        <a
+          href="#"
+          className="mono text-arc-blue hover:underline transition-colors"
+        >
           View stream on ArcScan ↗
         </a>
-        <a href="#" className="hover:text-arc-blue transition-colors">
+        <a
+          href="#"
+          className="mono text-arc-blue hover:underline transition-colors"
+        >
           View refund tx ↗
         </a>
       </div>

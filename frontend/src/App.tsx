@@ -64,20 +64,47 @@ export default function App() {
       : 0
 
   return (
-    <div className="min-h-screen" style={{ backgroundColor: '#0a0a0f' }}>
+    <div
+      className="min-h-screen"
+      style={{
+        backgroundColor: '#080810',
+        backgroundImage: 'radial-gradient(circle at 1px 1px, #1a1a2e 1px, transparent 0)',
+        backgroundSize: '32px 32px',
+      }}
+    >
       {/* Header */}
-      <header className="border-b border-[#1e1e2e] px-6 py-3 flex items-center justify-between">
+      <header
+        className="px-6 py-3 flex items-center justify-between sticky top-0 z-10 backdrop-blur-sm"
+        style={{
+          background: 'linear-gradient(180deg, #0d0d1a 0%, #080810 100%)',
+          borderBottom: '1px solid #1a1a2e',
+        }}
+      >
         <div className="flex items-center gap-3">
-          <span className="text-white font-bold text-lg">⚡ KronoScan</span>
-          <span className="inline-flex items-center gap-1.5 rounded-full bg-[#111118] border border-[#1e1e2e] px-2.5 py-0.5 text-xs text-gray-400">
-            <span className="inline-block w-1.5 h-1.5 rounded-full bg-green-400" />
+          <span
+            className="text-white font-bold text-lg tracking-tight"
+            style={{ textShadow: '0 0 20px rgba(59,130,246,0.6)' }}
+          >
+            ⚡ KronoScan
+          </span>
+          <span
+            className="inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-xs text-gray-400"
+            style={{ background: '#0d1117', border: '1px solid #1a3a1a' }}
+          >
+            <span
+              className="inline-block w-1.5 h-1.5 rounded-full bg-green-400"
+              style={{ boxShadow: '0 0 6px rgba(74,222,128,0.8)' }}
+            />
             Arc Testnet
           </span>
         </div>
         <div className="flex items-center gap-2">
           {connected ? (
             <>
-              <span className="inline-block w-2 h-2 rounded-full bg-green-400" />
+              <span
+                className="inline-block w-2 h-2 rounded-full bg-green-400"
+                style={{ boxShadow: '0 0 6px rgba(74,222,128,0.8)' }}
+              />
               <span className="text-xs text-green-400">Coordinator connected</span>
             </>
           ) : (
@@ -102,13 +129,23 @@ export default function App() {
             type="button"
             onClick={handleRunAudit}
             disabled={!canRun && !isDone}
-            className={`w-full rounded-lg py-3 px-4 font-bold text-sm transition-colors ${
+            className={`w-full rounded-lg py-3 px-4 font-bold text-sm transition-all duration-200 ${
               canRun
-                ? 'bg-arc-blue text-white hover:bg-blue-500 cursor-pointer'
+                ? 'glow-blue cursor-pointer text-white hover:scale-[1.01]'
                 : isDone
-                ? 'bg-[#1e1e2e] text-green-400 cursor-default'
-                : 'bg-[#1e1e2e] text-gray-600 cursor-not-allowed'
+                ? 'cursor-default text-green-400'
+                : 'cursor-not-allowed text-gray-600'
             }`}
+            style={
+              canRun
+                ? {
+                    background: 'linear-gradient(135deg, #1d4ed8 0%, #3b82f6 100%)',
+                    boxShadow: '0 4px 20px rgba(59, 130, 246, 0.3)',
+                  }
+                : isDone
+                ? { background: '#0d1a0d', border: '1px solid #16a34a' }
+                : { background: '#1a1a2e', border: '1px solid #2a2a3e' }
+            }
           >
             {status === 'IDLE' && '▶ Run Audit'}
             {status === 'OPENING' && 'Opening stream...'}
@@ -137,7 +174,7 @@ export default function App() {
             verified={true}
           />
 
-          <hr className="border-[#1e1e2e]" />
+          <hr style={{ border: 'none', borderTop: '1px solid #1a1a2e' }} />
 
           <FindingsPanel findings={findings} status={status} />
 
