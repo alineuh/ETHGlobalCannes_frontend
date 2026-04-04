@@ -7,42 +7,34 @@ interface Props {
 
 const severityConfig: Record<
   Severity,
-  { borderColor: string; bgGradient: string; boxShadow: string; badgeBg: string; badgeText: string; badgeGlow: string; label: string }
+  { borderColor: string; cardBg: string; badgeBg: string; badgeText: string; label: string }
 > = {
   CRITICAL: {
     borderColor: '#ef4444',
-    bgGradient: 'linear-gradient(90deg, rgba(239,68,68,0.08) 0%, transparent 100%)',
-    boxShadow: 'inset 0 0 20px rgba(239,68,68,0.05)',
+    cardBg: 'linear-gradient(90deg, #fff5f5 0%, white 40%)',
     badgeBg: '#ef4444',
     badgeText: '#ffffff',
-    badgeGlow: '0 0 10px rgba(239,68,68,0.4)',
     label: 'CRITICAL',
   },
   HIGH: {
     borderColor: '#f97316',
-    bgGradient: 'linear-gradient(90deg, rgba(249,115,22,0.08) 0%, transparent 100%)',
-    boxShadow: 'inset 0 0 20px rgba(249,115,22,0.05)',
+    cardBg: 'linear-gradient(90deg, #fff7ed 0%, white 40%)',
     badgeBg: '#f97316',
     badgeText: '#ffffff',
-    badgeGlow: '0 0 10px rgba(249,115,22,0.4)',
     label: 'HIGH',
   },
   MEDIUM: {
-    borderColor: '#eab308',
-    bgGradient: 'linear-gradient(90deg, rgba(234,179,8,0.08) 0%, transparent 100%)',
-    boxShadow: 'inset 0 0 20px rgba(234,179,8,0.05)',
-    badgeBg: '#eab308',
-    badgeText: '#000000',
-    badgeGlow: '0 0 10px rgba(234,179,8,0.4)',
+    borderColor: '#f59e0b',
+    cardBg: 'linear-gradient(90deg, #fffbeb 0%, white 40%)',
+    badgeBg: '#f59e0b',
+    badgeText: '#ffffff',
     label: 'MEDIUM',
   },
   LOW: {
-    borderColor: '#60a9fa',
-    bgGradient: 'linear-gradient(90deg, rgba(96,169,250,0.08) 0%, transparent 100%)',
-    boxShadow: 'inset 0 0 20px rgba(96,169,250,0.05)',
-    badgeBg: '#60a9fa',
+    borderColor: '#3b82f6',
+    cardBg: 'linear-gradient(90deg, #eff6ff 0%, white 40%)',
+    badgeBg: '#3b82f6',
     badgeText: '#ffffff',
-    badgeGlow: '0 0 10px rgba(96,169,250,0.4)',
     label: 'LOW',
   },
 }
@@ -51,77 +43,152 @@ export function FindingsPanel({ findings, status }: Props) {
   const reversed = [...findings].reverse()
 
   return (
-    <div className="space-y-3">
-      {/* Title row */}
-      <div className="flex items-center gap-2">
-        <h2 className="text-sm font-semibold text-gray-400 uppercase tracking-wider">
-          Vulnerability Findings
-        </h2>
-        {status === 'ACTIVE' && (
-          <span className="inline-block w-2 h-2 rounded-full bg-green-400 animate-pulse" />
-        )}
+    <div
+      style={{
+        background: 'white',
+        borderRadius: 16,
+        boxShadow: '0 1px 3px rgba(0,0,0,0.08), 0 8px 24px rgba(79,110,247,0.06)',
+        overflow: 'hidden',
+        minHeight: 500,
+        display: 'flex',
+        flexDirection: 'column',
+      }}
+    >
+      {/* Title bar */}
+      <div
+        style={{
+          background: 'linear-gradient(135deg, #4f6ef7 0%, #7c3aed 100%)',
+          padding: '16px 20px',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+        }}
+      >
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+          <span
+            style={{
+              color: 'white',
+              fontWeight: 700,
+              fontSize: 14,
+              letterSpacing: '0.05em',
+              textTransform: 'uppercase',
+            }}
+          >
+            Vulnerability Findings
+          </span>
+          {status === 'ACTIVE' && (
+            <span
+              className="stream-dot"
+              style={{
+                width: 8,
+                height: 8,
+                borderRadius: '50%',
+                background: '#86efac',
+                display: 'inline-block',
+              }}
+            />
+          )}
+        </div>
         {findings.length > 0 && (
-          <span className="inline-flex items-center justify-center rounded-full bg-arc-blue px-2 py-0.5 text-xs font-bold text-white min-w-[1.25rem]">
+          <span
+            style={{
+              background: 'white',
+              color: '#4f6ef7',
+              borderRadius: '50px',
+              padding: '2px 10px',
+              fontSize: 12,
+              fontWeight: 700,
+            }}
+          >
             {findings.length}
           </span>
         )}
       </div>
 
-      {/* Empty states */}
-      {findings.length === 0 && status === 'IDLE' && (
-        <div className="py-12 text-center text-gray-600 text-sm">
-          Submit a contract to begin scanning
-        </div>
-      )}
-
-      {findings.length === 0 && status === 'ACTIVE' && (
-        <div className="py-12 text-center">
-          <span className="animate-pulse-text text-gray-500 text-sm">
-            Scanning for vulnerabilities...
-          </span>
-        </div>
-      )}
-
-      {/* Finding cards */}
-      {reversed.map((finding, i) => {
-        const cfg = severityConfig[finding.severity]
-        return (
+      {/* Findings list */}
+      <div style={{ padding: 16, overflowY: 'auto', maxHeight: 440, flex: 1 }}>
+        {/* Empty states */}
+        {findings.length === 0 && status === 'IDLE' && (
           <div
-            key={`${finding.title}-${finding.line}-${i}`}
-            className="finding-enter rounded-r-lg p-4 space-y-2 transition-all duration-150 group"
             style={{
-              borderLeft: `4px solid ${cfg.borderColor}`,
-              background: cfg.bgGradient,
-              boxShadow: cfg.boxShadow,
-              border: `1px solid #1a1a2e`,
-              borderLeftColor: cfg.borderColor,
-              borderLeftWidth: '4px',
-              animationDelay: `${i * 20}ms`,
+              padding: 40,
+              textAlign: 'center',
+              color: '#94a3b8',
+              fontSize: 14,
             }}
           >
-            <div className="flex items-center gap-2 flex-wrap">
-              <span
-                className="inline-flex items-center rounded px-2.5 py-1 text-xs font-bold tracking-wide"
-                style={{
-                  background: cfg.badgeBg,
-                  color: cfg.badgeText,
-                  boxShadow: cfg.badgeGlow,
-                }}
-              >
-                {cfg.label}
-              </span>
-              <span
-                className="font-semibold text-white text-sm"
-                style={{ letterSpacing: '-0.01em' }}
-              >
-                {finding.title}
-              </span>
-            </div>
-            <div className="mono text-xs text-gray-500">#{finding.line}</div>
-            <div className="text-sm text-gray-400">{finding.description}</div>
+            <div style={{ fontSize: 32, marginBottom: 12 }}>🔍</div>
+            Submit a contract to begin scanning
           </div>
-        )
-      })}
+        )}
+
+        {findings.length === 0 && status === 'ACTIVE' && (
+          <div style={{ padding: 40, textAlign: 'center' }}>
+            <div
+              style={{
+                height: 3,
+                background: 'linear-gradient(90deg, #4f6ef7, #7c3aed)',
+                borderRadius: 2,
+                marginBottom: 16,
+                animation: 'tickRight 2s ease-in-out infinite',
+              }}
+            />
+            <span style={{ color: '#94a3b8', fontSize: 14 }}>
+              Scanning for vulnerabilities...
+            </span>
+          </div>
+        )}
+
+        {/* Finding cards */}
+        {reversed.map((finding, i) => {
+          const cfg = severityConfig[finding.severity]
+          return (
+            <div
+              key={`${finding.title}-${finding.line}-${i}`}
+              className="finding-enter"
+              style={{
+                marginBottom: 10,
+                borderRadius: 10,
+                border: '1px solid #f1f5f9',
+                borderLeft: `4px solid ${cfg.borderColor}`,
+                padding: '14px 16px',
+                background: cfg.cardBg,
+                boxShadow: '0 1px 3px rgba(0,0,0,0.04)',
+                animationDelay: `${i * 20}ms`,
+              }}
+            >
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap', marginBottom: 6 }}>
+                <span
+                  style={{
+                    background: cfg.badgeBg,
+                    color: cfg.badgeText,
+                    fontSize: 10,
+                    fontWeight: 800,
+                    borderRadius: 4,
+                    padding: '2px 6px',
+                    textTransform: 'uppercase',
+                    letterSpacing: '0.05em',
+                  }}
+                >
+                  {cfg.label}
+                </span>
+                <span style={{ color: '#1a1a2e', fontWeight: 600, fontSize: 14 }}>
+                  {finding.title}
+                </span>
+              </div>
+              <div
+                className="mono"
+                style={{ color: '#94a3b8', fontSize: 11, marginBottom: 4 }}
+              >
+                #{finding.line}
+              </div>
+              <div style={{ color: '#64748b', fontSize: 13 }}>
+                {finding.description}
+              </div>
+            </div>
+          )
+        })}
+      </div>
     </div>
   )
 }

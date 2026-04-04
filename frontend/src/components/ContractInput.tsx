@@ -32,105 +32,133 @@ function isValidAddress(addr: string): boolean {
 export function ContractInput({ value, onChange }: Props) {
   const setMode = (mode: ContractInputMode) => onChange({ ...value, mode })
 
-  const tabBase = 'px-4 py-2.5 text-sm font-medium transition-colors cursor-pointer border-b-2'
-  const activeTab = `${tabBase} text-white border-blue-500`
-  const inactiveTab = `${tabBase} text-gray-500 border-transparent hover:text-gray-300`
-
   return (
     <div
-      className="rounded-lg overflow-hidden"
-      style={{ border: '1px solid #1a1a2e', background: '#0a0a14' }}
+      style={{
+        background: 'white',
+        borderRadius: 16,
+        boxShadow: '0 1px 3px rgba(0,0,0,0.08), 0 8px 24px rgba(79,110,247,0.06)',
+        overflow: 'hidden',
+      }}
     >
-      {/* Tabs */}
-      <div className="flex" style={{ borderBottom: '1px solid #1a1a2e' }}>
-        <button
-          className={value.mode === 'source' ? activeTab : inactiveTab}
-          onClick={() => setMode('source')}
-          type="button"
-        >
-          Paste Source
-        </button>
-        <button
-          className={value.mode === 'address' ? activeTab : inactiveTab}
-          onClick={() => setMode('address')}
-          type="button"
-        >
-          On-Chain Address
-        </button>
+      {/* Tabs bar */}
+      <div
+        style={{
+          background: '#f8f9ff',
+          borderBottom: '1px solid #e8eaf6',
+          display: 'flex',
+        }}
+      >
+        {(['source', 'address'] as ContractInputMode[]).map(mode => (
+          <button
+            key={mode}
+            type="button"
+            onClick={() => setMode(mode)}
+            style={{
+              padding: '12px 20px',
+              fontWeight: 600,
+              fontSize: 13,
+              cursor: 'pointer',
+              border: 'none',
+              borderBottom: value.mode === mode ? '2px solid #4f6ef7' : '2px solid transparent',
+              background: value.mode === mode ? 'white' : 'transparent',
+              color: value.mode === mode ? '#4f6ef7' : '#94a3b8',
+              boxShadow: value.mode === mode ? '0 1px 4px rgba(79,110,247,0.08)' : 'none',
+              transition: 'all 0.15s',
+            }}
+            onMouseEnter={e => {
+              if (value.mode !== mode) e.currentTarget.style.color = '#64748b'
+            }}
+            onMouseLeave={e => {
+              if (value.mode !== mode) e.currentTarget.style.color = '#94a3b8'
+            }}
+          >
+            {mode === 'source' ? 'Paste Source' : 'On-Chain Address'}
+          </button>
+        ))}
       </div>
 
-      <div className="p-4">
+      <div style={{ padding: 0 }}>
         {value.mode === 'source' ? (
           <textarea
-            className="mono w-full resize-none outline-none transition-all duration-200"
-            rows={12}
+            rows={16}
             placeholder={SAMPLE_CONTRACT}
             value={value.source}
             onChange={e => onChange({ ...value, source: e.target.value })}
             spellCheck={false}
             style={{
-              background: '#050508',
-              border: '1px solid #1a1a2e',
-              borderLeft: '3px solid #1e3a5f',
-              borderRadius: '8px',
-              padding: '12px 12px 12px 16px',
-              fontSize: '13px',
-              lineHeight: '1.6',
-              color: '#a8b8d8',
-              caretColor: '#3b82f6',
-            }}
-            onFocus={e => {
-              e.currentTarget.style.borderColor = 'rgba(59,130,246,0.5)'
-              e.currentTarget.style.boxShadow = '0 0 0 1px rgba(59,130,246,0.2)'
-              e.currentTarget.style.borderLeftColor = '#3b82f6'
-            }}
-            onBlur={e => {
-              e.currentTarget.style.borderColor = '#1a1a2e'
-              e.currentTarget.style.boxShadow = 'none'
-              e.currentTarget.style.borderLeftColor = '#1e3a5f'
+              width: '100%',
+              minHeight: 340,
+              background: '#0d1117',
+              color: '#c9d1d9',
+              fontFamily: 'JetBrains Mono, monospace',
+              fontSize: 13,
+              lineHeight: 1.7,
+              padding: '20px 20px 20px 16px',
+              border: 'none',
+              outline: 'none',
+              resize: 'vertical',
+              borderLeft: '3px solid #4f6ef7',
+              display: 'block',
             }}
           />
         ) : (
-          <div className="space-y-3">
-            <div className="relative">
-              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-600 text-sm select-none">🔍</span>
+          <div style={{ padding: 16, display: 'flex', flexDirection: 'column', gap: 12 }}>
+            <div style={{ position: 'relative' }}>
+              <span
+                style={{
+                  position: 'absolute',
+                  left: 12,
+                  top: '50%',
+                  transform: 'translateY(-50%)',
+                  color: '#94a3b8',
+                  fontSize: 14,
+                  pointerEvents: 'none',
+                  userSelect: 'none',
+                }}
+              >
+                ⌕
+              </span>
               <input
                 type="text"
-                className="mono w-full outline-none transition-all duration-200"
                 placeholder="0x..."
                 value={value.address}
                 onChange={e => onChange({ ...value, address: e.target.value })}
                 spellCheck={false}
                 style={{
-                  background: '#050508',
-                  border: '1px solid #1a1a2e',
-                  borderRadius: '8px',
-                  padding: '12px 12px 12px 2.25rem',
-                  fontSize: '13px',
-                  color: '#a8b8d8',
+                  width: '100%',
+                  background: 'white',
+                  border: '1px solid #e8eaf6',
+                  borderRadius: 8,
+                  padding: '11px 12px 11px 32px',
+                  fontSize: 13,
+                  fontFamily: 'JetBrains Mono, monospace',
+                  color: '#1a1a2e',
+                  outline: 'none',
                 }}
                 onFocus={e => {
-                  e.currentTarget.style.borderColor = 'rgba(59,130,246,0.5)'
-                  e.currentTarget.style.boxShadow = '0 0 0 1px rgba(59,130,246,0.2)'
+                  e.currentTarget.style.borderColor = '#4f6ef7'
+                  e.currentTarget.style.boxShadow = '0 0 0 3px rgba(79,110,247,0.12)'
                 }}
                 onBlur={e => {
-                  e.currentTarget.style.borderColor = '#1a1a2e'
+                  e.currentTarget.style.borderColor = '#e8eaf6'
                   e.currentTarget.style.boxShadow = 'none'
                 }}
               />
             </div>
 
             <select
-              className="w-full outline-none transition-all duration-200"
               value={value.chain}
               onChange={e => onChange({ ...value, chain: e.target.value })}
               style={{
-                background: '#050508',
-                border: '1px solid #1a1a2e',
-                borderRadius: '8px',
-                padding: '12px',
-                fontSize: '13px',
-                color: '#a8b8d8',
+                width: '100%',
+                background: 'white',
+                border: '1px solid #e8eaf6',
+                borderRadius: 8,
+                padding: '11px 12px',
+                fontSize: 13,
+                color: '#1a1a2e',
+                outline: 'none',
               }}
             >
               {CHAINS.map(c => (
@@ -140,11 +168,11 @@ export function ContractInput({ value, onChange }: Props) {
 
             {value.address.length > 0 && (
               isValidAddress(value.address) ? (
-                <p className="text-xs text-green-400">
+                <p style={{ fontSize: 12, color: '#16a34a' }}>
                   ✓ Will fetch verified source from block explorer
                 </p>
               ) : (
-                <p className="text-xs text-gray-500">
+                <p style={{ fontSize: 12, color: '#94a3b8' }}>
                   Enter a valid contract address
                 </p>
               )

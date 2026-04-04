@@ -23,104 +23,104 @@ export function RefundSummary({ consumed, refunded, duration, findings }: Props)
 
   return (
     <div
-      className="rounded-lg p-4 space-y-4"
       style={{
-        border: '2px solid #16a34a',
-        background: 'linear-gradient(135deg, #051a0d 0%, #080810 100%)',
-        boxShadow: '0 -4px 20px rgba(34,197,94,0.1)',
+        background: 'linear-gradient(135deg, #f0fdf4, #ecfdf5)',
+        border: '1px solid #bbf7d0',
+        borderRadius: 16,
+        padding: 20,
+        display: 'flex',
+        flexDirection: 'column',
+        gap: 16,
       }}
     >
       {/* Header */}
-      <div className="flex items-center gap-2">
-        <h2
-          className="text-lg font-bold text-green-400"
-          style={{ textShadow: '0 0 20px rgba(34,197,94,0.5)' }}
-        >
-          ✓ Audit Complete
-        </h2>
+      <div style={{ fontSize: 18, fontWeight: 800, color: '#16a34a' }}>
+        ✓ Audit Complete
       </div>
 
       {/* Severity counts 2x2 grid */}
-      <div className="grid grid-cols-2 gap-2">
-        <div
-          className="rounded p-3 text-center"
-          style={{ background: '#0a0a14', border: '1px solid #1a1a2e' }}
-        >
-          <div className="mono text-2xl font-bold text-critical">{counts.CRITICAL}</div>
-          <div className="text-xs text-gray-500 mt-1">CRITICAL</div>
-        </div>
-        <div
-          className="rounded p-3 text-center"
-          style={{ background: '#0a0a14', border: '1px solid #1a1a2e' }}
-        >
-          <div className="mono text-2xl font-bold text-high">{counts.HIGH}</div>
-          <div className="text-xs text-gray-500 mt-1">HIGH</div>
-        </div>
-        <div
-          className="rounded p-3 text-center"
-          style={{ background: '#0a0a14', border: '1px solid #1a1a2e' }}
-        >
-          <div className="mono text-2xl font-bold text-medium">{counts.MEDIUM}</div>
-          <div className="text-xs text-gray-500 mt-1">MEDIUM</div>
-        </div>
-        <div
-          className="rounded p-3 text-center"
-          style={{ background: '#0a0a14', border: '1px solid #1a1a2e' }}
-        >
-          <div className="mono text-2xl font-bold text-low">{counts.LOW}</div>
-          <div className="text-xs text-gray-500 mt-1">LOW</div>
-        </div>
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 }}>
+        {[
+          { label: 'CRITICAL', count: counts.CRITICAL, color: '#ef4444' },
+          { label: 'HIGH', count: counts.HIGH, color: '#f97316' },
+          { label: 'MEDIUM', count: counts.MEDIUM, color: '#f59e0b' },
+          { label: 'LOW', count: counts.LOW, color: '#3b82f6' },
+        ].map(({ label, count, color }) => (
+          <div
+            key={label}
+            style={{
+              background: 'white',
+              borderRadius: 8,
+              padding: 12,
+              textAlign: 'center',
+              border: '1px solid #dcfce7',
+            }}
+          >
+            <div
+              className="mono"
+              style={{ fontSize: 22, fontWeight: 800, color }}
+            >
+              {count}
+            </div>
+            <div style={{ fontSize: 11, color: '#94a3b8', marginTop: 2 }}>{label}</div>
+          </div>
+        ))}
       </div>
 
       {/* Stats row */}
-      <div className="flex items-center gap-4 text-sm flex-wrap">
-        <div className="text-center">
-          <div className="mono font-bold text-white">{duration}s</div>
-          <div className="text-xs text-gray-500">Duration</div>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 16, flexWrap: 'wrap' }}>
+        <div style={{ textAlign: 'center' }}>
+          <div className="mono" style={{ fontWeight: 700, color: '#1a1a2e' }}>{duration}s</div>
+          <div style={{ fontSize: 11, color: '#94a3b8' }}>Duration</div>
         </div>
-        <div className="w-px h-8" style={{ background: '#1a1a2e' }} />
-        <div className="text-center">
-          <div className="mono font-bold text-white">{formatUSDC(consumed)}</div>
-          <div className="text-xs text-gray-500">Consumed</div>
+        <div style={{ width: 1, height: 32, background: '#bbf7d0' }} />
+        <div style={{ textAlign: 'center' }}>
+          <div className="mono" style={{ fontWeight: 700, color: '#1a1a2e' }}>{formatUSDC(consumed)}</div>
+          <div style={{ fontSize: 11, color: '#94a3b8' }}>Consumed</div>
         </div>
-        <div className="w-px h-8" style={{ background: '#1a1a2e' }} />
-        <div className="text-center">
-          <div className="mono font-bold text-green-400">{formatUSDC(refunded)}</div>
-          <div className="text-xs text-gray-500">Refunded</div>
+        <div style={{ width: 1, height: 32, background: '#bbf7d0' }} />
+        <div style={{ textAlign: 'center' }}>
+          <div className="mono" style={{ fontWeight: 700, color: '#16a34a' }}>{formatUSDC(refunded)}</div>
+          <div style={{ fontSize: 11, color: '#94a3b8' }}>Refunded</div>
         </div>
       </div>
 
       {/* Comparison box */}
       <div
-        className="rounded p-3 space-y-1.5"
-        style={{ background: '#050508', border: '1px solid #1e3a5f' }}
+        style={{
+          background: 'white',
+          borderRadius: 10,
+          padding: 12,
+          display: 'flex',
+          flexDirection: 'column',
+          gap: 6,
+        }}
       >
-        <div className="flex items-center justify-between text-sm">
-          <span className="text-gray-500 line-through">Traditional audit</span>
-          <span className="mono text-gray-500 line-through">$5,000+ / 2 weeks</span>
+        <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 13 }}>
+          <span style={{ color: '#ef4444', textDecoration: 'line-through' }}>Traditional audit</span>
+          <span className="mono" style={{ color: '#ef4444', textDecoration: 'line-through' }}>$5,000+ / 2 weeks</span>
         </div>
-        <div className="flex items-center justify-between text-sm">
-          <span className="text-green-400 font-bold">KronoScan</span>
-          <span
-            className="mono font-bold text-green-400"
-            style={{ textShadow: '0 0 10px rgba(34,197,94,0.4)' }}
-          >
-            {formatUSDC(consumed)} / {duration} seconds
+        <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 13 }}>
+          <span style={{ color: '#16a34a', fontWeight: 700 }}>KronoScan</span>
+          <span className="mono" style={{ color: '#16a34a', fontWeight: 700 }}>
+            {formatUSDC(consumed)} / {duration}s
           </span>
         </div>
       </div>
 
       {/* Links */}
-      <div className="flex gap-4 text-xs">
+      <div style={{ display: 'flex', gap: 16 }}>
         <a
           href="#"
-          className="mono text-arc-blue hover:underline transition-colors"
+          className="mono"
+          style={{ color: '#4f6ef7', fontSize: 12, textDecoration: 'underline' }}
         >
           View stream on ArcScan ↗
         </a>
         <a
           href="#"
-          className="mono text-arc-blue hover:underline transition-colors"
+          className="mono"
+          style={{ color: '#4f6ef7', fontSize: 12, textDecoration: 'underline' }}
         >
           View refund tx ↗
         </a>
