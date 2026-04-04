@@ -37,14 +37,14 @@ export function ContractInput({ value, onChange }: Props) {
       style={{
         background: 'white',
         borderRadius: 16,
-        boxShadow: '0 2px 8px rgba(0,0,0,0.06), 0 8px 24px rgba(79,110,247,0.08)',
+        boxShadow: '0 2px 8px rgba(0,0,0,0.06), 0 8px 24px rgba(8,145,178,0.08)',
         overflow: 'hidden',
       }}
     >
       {/* Top gradient accent line */}
       <div style={{
         height: 3,
-        background: 'linear-gradient(90deg, #4f6ef7, #7c3aed)',
+        background: 'linear-gradient(90deg, #0891b2, #10b981)',
         borderRadius: '16px 16px 0 0',
       }} />
 
@@ -67,10 +67,10 @@ export function ContractInput({ value, onChange }: Props) {
               fontSize: 13,
               cursor: 'pointer',
               border: 'none',
-              borderBottom: value.mode === mode ? '2px solid #4f6ef7' : '2px solid transparent',
+              borderBottom: value.mode === mode ? '2px solid #0891b2' : '2px solid transparent',
               background: value.mode === mode ? 'white' : 'transparent',
-              color: value.mode === mode ? '#4f6ef7' : '#94a3b8',
-              boxShadow: value.mode === mode ? '0 1px 4px rgba(79,110,247,0.08)' : 'none',
+              color: value.mode === mode ? '#0891b2' : '#94a3b8',
+              boxShadow: value.mode === mode ? '0 1px 4px rgba(8,145,178,0.08)' : 'none',
               transition: 'all 0.15s',
             }}
             onMouseEnter={e => {
@@ -105,7 +105,7 @@ export function ContractInput({ value, onChange }: Props) {
               border: 'none',
               outline: 'none',
               resize: 'vertical',
-              borderLeft: '3px solid #4f6ef7',
+              borderLeft: '3px solid #0891b2',
               display: 'block',
             }}
           />
@@ -144,8 +144,8 @@ export function ContractInput({ value, onChange }: Props) {
                   outline: 'none',
                 }}
                 onFocus={e => {
-                  e.currentTarget.style.borderColor = '#4f6ef7'
-                  e.currentTarget.style.boxShadow = '0 0 0 3px rgba(79,110,247,0.12)'
+                  e.currentTarget.style.borderColor = '#0891b2'
+                  e.currentTarget.style.boxShadow = '0 0 0 3px rgba(8,145,178,0.12)'
                 }}
                 onBlur={e => {
                   e.currentTarget.style.borderColor = '#e8eaf6'

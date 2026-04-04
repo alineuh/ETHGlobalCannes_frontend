@@ -4,14 +4,14 @@ export default {
   theme: {
     extend: {
       colors: {
-        arcBlue: '#4f6ef7',
-        arcPurple: '#7c3aed',
+        arcBlue: '#0891b2',
+        arcPurple: '#0e7490',
         critical: '#ef4444',
         high: '#f97316',
         medium: '#f59e0b',
         low: '#3b82f6',
-        darkBg: '#0a0a0f',
-        cardBg: '#ffffff',
+        darkBg: '#060d14',
+        cardBg: '#0a1520',
       },
     },
   },
