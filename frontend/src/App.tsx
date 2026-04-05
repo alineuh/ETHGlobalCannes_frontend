@@ -137,8 +137,6 @@ export default function App() {
   const [contractAddress, setContractAddress] = useState('')
   const [showDashboard, setShowDashboard] = useState(false)
 
-  // Change 2: split launch button
-  const [auditReady, setAuditReady] = useState(false)
   // Change 4: agent selector
   const [selectedAgent, setSelectedAgent] = useState('pro')
   // Change 5: findings filter
@@ -228,7 +226,6 @@ export default function App() {
             newIntervals.forEach(id => window.clearInterval(id))
             setDemoStatus('CLOSED')
             setScanning(false)
-            setAuditReady(false)
           }, 1200)
         }
       }, 3000 + i * 3500)
@@ -248,7 +245,6 @@ export default function App() {
     setScanning(false)
     setDemoMode(false)
     setNanoTxs([])
-    setAuditReady(false)
     setActiveFilter(null)
   }
 
@@ -575,71 +571,43 @@ export default function App() {
               </span>
             </div>
 
-            {/* Change 2: Run Audit button (prepare) */}
+            {/* Single launch button */}
             <button
               onClick={() => {
-                if (status === 'CLOSED') { resetDemo(); setAuditReady(false) }
-                else if (status === 'ACTIVE') { /* do nothing */ }
-                else setAuditReady(!auditReady)
+                if (isLive) coordinator.runAudit(contractInput, true)
+                else if (status === 'CLOSED') resetDemo()
+                else if (status === 'IDLE') startDemo()
               }}
               style={{
                 background: status === 'ACTIVE'
-                  ? 'rgba(37,99,235,0.08)'
-                  : auditReady
-                  ? 'transparent'
+                  ? 'rgba(37,99,235,0.1)'
+                  : status === 'CLOSED'
+                  ? 'rgba(16,185,129,0.1)'
                   : 'linear-gradient(135deg, #1d4ed8, #2563eb)',
-                border: auditReady
-                  ? '1px solid #2563eb'
-                  : status === 'ACTIVE'
-                  ? '1px solid rgba(37,99,235,0.2)'
-                  : '1px solid transparent',
-                color: status === 'ACTIVE' ? '#334155' : auditReady ? '#2563eb' : 'white',
-                borderRadius: 6, padding: '13px 24px',
+                color: status === 'ACTIVE' ? '#3b82f6' : status === 'CLOSED' ? '#10b981' : 'white',
+                border: status === 'ACTIVE' ? '1px solid rgba(37,99,235,0.3)' : 'none',
+                borderRadius: 6, padding: '14px 24px',
                 fontSize: 14, fontWeight: 700,
-                cursor: status === 'ACTIVE' ? 'default' : 'pointer',
+                cursor: status === 'ACTIVE' ? 'not-allowed' : 'pointer',
                 width: '100%', fontFamily: 'Inter, sans-serif',
+                boxShadow: status === 'IDLE' ? '0 4px 20px rgba(37,99,235,0.3)' : 'none',
                 transition: 'all 0.2s',
-                display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
+                display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 10,
                 flexShrink: 0,
               }}
             >
-              {status === 'CLOSED' ? '↩ New Scan'
-                : status === 'ACTIVE' ? '⏳ Scanning in progress...'
-                : auditReady ? '✓ Ready to launch'
-                : '▶ Run Audit'}
+              {status === 'IDLE' && <><span>⚡</span> Launch Analysis</>}
+              {status === 'ACTIVE' && <><span style={{ animation: 'spin 1s linear infinite', display: 'inline-block' }}>◌</span> Scanning...</>}
+              {status === 'CLOSED' && <><span>↩</span> New Scan</>}
+              {(status === 'OPENING' || status === 'CLOSING') && 'Processing...'}
+              {status === 'TERMINATED' && 'Terminated'}
             </button>
-
-            {/* Change 2: Launch Analysis button (only when ready) */}
-            {auditReady && status === 'IDLE' && (
-              <button
-                onClick={() => {
-                  setAuditReady(false)
-                  if (isLive) coordinator.runAudit(contractInput, true)
-                  else startDemo()
-                }}
-                style={{
-                  background: 'linear-gradient(135deg, #059669, #10b981)',
-                  color: 'white', border: 'none',
-                  borderRadius: 6, padding: '16px 24px',
-                  fontSize: 15, fontWeight: 800, cursor: 'pointer',
-                  width: '100%', fontFamily: 'Inter, sans-serif',
-                  letterSpacing: '-0.01em',
-                  boxShadow: '0 0 24px rgba(16,185,129,0.4)',
-                  animation: 'btnGlow 1.5s infinite',
-                  display: 'flex', alignItems: 'center',
-                  justifyContent: 'center', gap: 10,
-                  flexShrink: 0,
-                }}
-              >
-                ⚡ Launch Analysis
-              </button>
-            )}
           </div>
 
           {/* RIGHT: Findings panel */}
           <div style={{ display: 'flex', flexDirection: 'column', minHeight: 0 }}>
 
-            {status === 'IDLE' && !auditReady ? (
+            {status === 'IDLE' ? (
               /* Idle placeholder — Change 1: borderRadius 12→6 */
               <div style={{
                 flex: 1, display: 'flex', flexDirection: 'column',
