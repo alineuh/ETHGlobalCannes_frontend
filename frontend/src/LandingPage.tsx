@@ -671,22 +671,98 @@ export default function LandingPage({ onLaunch }: { onLaunch: () => void }) {
               Choose your AI agent
             </h2>
             <p style={{ fontSize: 14, color: '#475569', marginTop: 12 }}>
-              Each agent uses a different LLM. The nanopayment stream pays them directly.
+              5 specialized agents across 2 auto-detected pipelines. The nanopayment stream pays each LLM directly.
             </p>
           </div>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 20, marginBottom: 40 }}>
-            <PricingCard
-              name="Basic Agent" model="InjectionAgent · CryptoAgent — DeepSeek-V3" price="$0.00005/s" color="#60a5fa"
-              features={['InjectionAgent — SQL, XSS, SSRF, Command injection', 'CryptoAgent — hardcoded secrets, weak hashing', 'Smart contract: StaticAgent pattern matching', 'Auto-detected pipeline']}
-            />
-            <PricingCard
-              name="Pro Agent" model="DeepSeek-V3 + Gemini 1.5 Flash" price="$0.00015/s" color="#2563eb" recommended
-              features={['All Basic agents', 'AuthAgent (Gemini 1.5 Flash) — JWT, IDOR, OAuth', 'DataLeakAgent (Gemini 1.5 Flash) — CORS, PII leaks', 'SemanticAgent — contextual SC reasoning', 'Full classic + smart contract pipelines']}
-            />
-            <PricingCard
-              name="Enterprise Agent" model="All models + Groq / Llama 3.3 70B" price="$0.00040/s" color="#1d4ed8"
-              features={['All Pro agents', 'ValidatorAgent (Llama 3.3 70B) — dedup & PoC', 'False positive filtering', 'PoC sketch generation per finding', 'Severity promotion & cross-agent correlation']}
-            />
+
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, marginBottom: 24 }}>
+
+            {/* Row 1: 2 DeepSeek agents */}
+            <div style={{ background: '#0a0f1e', border: '1px solid rgba(37,99,235,0.2)', borderRadius: 8, padding: '24px 20px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 8 }}>
+                <span style={{ fontSize: 15, fontWeight: 800, color: '#e2f0f7' }}>InjectionAgent</span>
+                <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 10, color: '#60a5fa', background: 'rgba(37,99,235,0.1)', border: '1px solid rgba(37,99,235,0.2)', borderRadius: 4, padding: '2px 8px' }}>DeepSeek-V3</span>
+              </div>
+              <div style={{ fontSize: 10, color: '#334155', fontFamily: 'JetBrains Mono, monospace', marginBottom: 14 }}>Web APIs · Backend services · Database layers</div>
+              {['SQL Injection — string concatenation in queries', 'Command Injection — exec(), spawn(), eval()', 'XSS — unescaped output, innerHTML', 'SSRF — HTTP requests from user input', 'Template Injection — Jinja2, Handlebars', 'Path Traversal — ../ in file access'].map(f => (
+                <div key={f} style={{ display: 'flex', gap: 8, marginBottom: 6 }}>
+                  <span style={{ color: '#2563eb', flexShrink: 0, fontSize: 11 }}>✓</span>
+                  <span style={{ fontSize: 11, color: '#64748b' }}>{f}</span>
+                </div>
+              ))}
+            </div>
+
+            <div style={{ background: '#0a0f1e', border: '1px solid rgba(37,99,235,0.2)', borderRadius: 8, padding: '24px 20px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 8 }}>
+                <span style={{ fontSize: 15, fontWeight: 800, color: '#e2f0f7' }}>CryptoAgent</span>
+                <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 10, color: '#60a5fa', background: 'rgba(37,99,235,0.1)', border: '1px solid rgba(37,99,235,0.2)', borderRadius: 4, padding: '2px 8px' }}>DeepSeek-V3</span>
+              </div>
+              <div style={{ fontSize: 10, color: '#334155', fontFamily: 'JetBrains Mono, monospace', marginBottom: 14 }}>Any codebase handling secrets or encryption</div>
+              {['Hardcoded secrets — API keys, tokens in source', 'Weak hashing — MD5/SHA1, missing salt', 'Insecure PRNG — Math.random() for tokens', 'Weak encryption — ECB mode, reused IV', 'Key management — unprotected env vars', 'TLS/certificate — verify=False, rejectUnauthorized'].map(f => (
+                <div key={f} style={{ display: 'flex', gap: 8, marginBottom: 6 }}>
+                  <span style={{ color: '#2563eb', flexShrink: 0, fontSize: 11 }}>✓</span>
+                  <span style={{ fontSize: 11, color: '#64748b' }}>{f}</span>
+                </div>
+              ))}
+            </div>
+
+            {/* Row 2: 2 Gemini agents */}
+            <div style={{ background: '#0a0f1e', border: '1px solid rgba(96,165,250,0.2)', borderRadius: 8, padding: '24px 20px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 8 }}>
+                <span style={{ fontSize: 15, fontWeight: 800, color: '#e2f0f7' }}>AuthAgent</span>
+                <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 10, color: '#34d399', background: 'rgba(16,185,129,0.08)', border: '1px solid rgba(16,185,129,0.2)', borderRadius: 4, padding: '2px 8px' }}>Gemini 1.5 Flash</span>
+              </div>
+              <div style={{ fontSize: 10, color: '#334155', fontFamily: 'JetBrains Mono, monospace', marginBottom: 14 }}>Auth systems · APIs with user roles · OAuth flows</div>
+              {['JWT misconfiguration — alg:none, weak secret', 'IDOR — resource access without ownership check', 'Broken Access Control — missing role checks', 'Session Management — tokens not invalidated', 'OAuth/OIDC flaws — missing state, redirect_uri', 'Privilege Escalation — role modification client-side'].map(f => (
+                <div key={f} style={{ display: 'flex', gap: 8, marginBottom: 6 }}>
+                  <span style={{ color: '#10b981', flexShrink: 0, fontSize: 11 }}>✓</span>
+                  <span style={{ fontSize: 11, color: '#64748b' }}>{f}</span>
+                </div>
+              ))}
+            </div>
+
+            <div style={{ background: '#0a0f1e', border: '1px solid rgba(96,165,250,0.2)', borderRadius: 8, padding: '24px 20px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 8 }}>
+                <span style={{ fontSize: 15, fontWeight: 800, color: '#e2f0f7' }}>DataLeakAgent</span>
+                <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 10, color: '#34d399', background: 'rgba(16,185,129,0.08)', border: '1px solid rgba(16,185,129,0.2)', borderRadius: 4, padding: '2px 8px' }}>Gemini 1.5 Flash</span>
+              </div>
+              <div style={{ fontSize: 10, color: '#334155', fontFamily: 'JetBrains Mono, monospace', marginBottom: 14 }}>APIs · Services handling PII or financial data</div>
+              {['Sensitive data in logs — passwords, PII plaintext', 'Overpermissive CORS — Allow-Origin: * on auth routes', 'Information disclosure — stack traces in prod', 'Insecure data at rest — unencrypted in DB or files', 'HTTP vs HTTPS — hardcoded http://, missing HSTS', 'Cache-Control — missing headers on sensitive responses'].map(f => (
+                <div key={f} style={{ display: 'flex', gap: 8, marginBottom: 6 }}>
+                  <span style={{ color: '#10b981', flexShrink: 0, fontSize: 11 }}>✓</span>
+                  <span style={{ fontSize: 11, color: '#64748b' }}>{f}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Row 3: ValidatorAgent — full width */}
+          <div style={{
+            background: 'linear-gradient(135deg, rgba(37,99,235,0.08), rgba(29,78,216,0.05))',
+            border: '2px solid rgba(37,99,235,0.35)',
+            borderRadius: 8, padding: '24px 28px',
+            display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 24, alignItems: 'start',
+            marginBottom: 40,
+          }}>
+            <div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 8 }}>
+                <span style={{ fontSize: 15, fontWeight: 800, color: '#e2f0f7' }}>ValidatorAgent</span>
+                <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 10, color: '#a78bfa', background: 'rgba(167,139,250,0.08)', border: '1px solid rgba(167,139,250,0.2)', borderRadius: 4, padding: '2px 8px' }}>Groq / Llama 3.3 70B</span>
+                <span style={{ fontSize: 9, fontWeight: 700, background: '#2563eb', color: 'white', borderRadius: 4, padding: '2px 8px', letterSpacing: '0.06em' }}>SHARED · RUNS LAST</span>
+              </div>
+              <div style={{ fontSize: 10, color: '#334155', fontFamily: 'JetBrains Mono, monospace', marginBottom: 14 }}>Both pipelines · Smart contract + Classic code</div>
+              <div style={{ fontSize: 12, color: '#475569', lineHeight: 1.7 }}>
+                The ValidatorAgent runs after all other agents complete. It cross-references findings from all pipelines, eliminates duplicates and false positives, generates PoC sketches, and promotes severity based on combined context.
+              </div>
+            </div>
+            <div>
+              {['Deduplication — cross-agent finding correlation', 'False positive filtering — domain-aware judgment', 'PoC sketch generation — per validated finding', 'Severity promotion — based on combined context', 'Pipeline-aware — adapts to smart contract vs classic', 'Final AuditFinding[] output — clean, actionable'].map(f => (
+                <div key={f} style={{ display: 'flex', gap: 8, marginBottom: 8 }}>
+                  <span style={{ color: '#a78bfa', flexShrink: 0, fontSize: 11, marginTop: 2 }}>✓</span>
+                  <span style={{ fontSize: 12, color: '#64748b' }}>{f}</span>
+                </div>
+              ))}
+            </div>
           </div>
           {/* Criticality bonuses */}
           <div style={{
