@@ -44,12 +44,43 @@ const SEV: Record<string, { border: string; badge: string; text: string }> = {
   LOW:      { border: '#3b82f6', badge: 'rgba(59,130,246,0.1)', text: '#3b82f6' },
 }
 
+// --- AGENT CONFIG ---
+const AGENTS = [
+  {
+    id: 'basic',
+    name: 'Basic Agent',
+    model: 'GPT-4o mini',
+    price: '$0.00005/s',
+    desc: 'Standard detection — Reentrancy, Overflow, Access Control',
+    color: '#3b82f6',
+    recommended: false,
+  },
+  {
+    id: 'pro',
+    name: 'Pro Agent',
+    model: 'Claude Sonnet',
+    price: '$0.00015/s',
+    desc: 'Advanced reasoning — Flash loans, Oracle manipulation',
+    color: '#2563eb',
+    recommended: true,
+  },
+  {
+    id: 'enterprise',
+    name: 'Enterprise Agent',
+    model: 'Claude Opus',
+    price: '$0.00040/s',
+    desc: 'Maximum depth — MEV, Cross-contract, Economic attacks',
+    color: '#1d4ed8',
+    recommended: false,
+  },
+] as const
+
 // --- FINDING CARD ---
 function FindingCard({ finding }: { finding: AuditFinding }) {
   const s = SEV[finding.severity]
   return (
     <div className="finding-card" style={{
-      borderRadius: 8,
+      borderRadius: 6,
       background: 'rgba(6,11,24,0.75)',
       border: '1px solid rgba(37,99,235,0.1)',
       borderLeft: `3px solid ${s.border}`,
@@ -59,7 +90,7 @@ function FindingCard({ finding }: { finding: AuditFinding }) {
       <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
         <span style={{
           fontSize: 9, fontWeight: 700, padding: '2px 6px',
-          borderRadius: 4, letterSpacing: '0.06em',
+          borderRadius: 3, letterSpacing: '0.06em',
           fontFamily: 'JetBrains Mono, monospace',
           background: s.badge, color: s.text, flexShrink: 0,
         }}>{finding.severity}</span>
@@ -77,7 +108,7 @@ function FindingCard({ finding }: { finding: AuditFinding }) {
   )
 }
 
-// --- EMPTY STATE (while scanning) ---
+// --- EMPTY STATE ---
 function EmptyState({ scanning }: { scanning: boolean }) {
   if (scanning) {
     return (
@@ -106,6 +137,13 @@ export default function App() {
   const [contractAddress, setContractAddress] = useState('')
   const [showDashboard, setShowDashboard] = useState(false)
 
+  // Change 2: split launch button
+  const [auditReady, setAuditReady] = useState(false)
+  // Change 4: agent selector
+  const [selectedAgent, setSelectedAgent] = useState('pro')
+  // Change 5: findings filter
+  const [activeFilter, setActiveFilter] = useState<string | null>(null)
+
   const [demoMode, setDemoMode] = useState(false)
   const [demoStatus, setDemoStatus] = useState<'IDLE' | 'ACTIVE' | 'CLOSED'>('IDLE')
   const [demoFindings, setDemoFindings] = useState<AuditFinding[]>([])
@@ -129,6 +167,11 @@ export default function App() {
   const baseRate = isLive ? coordinator.baseRate : 100n
 
   const consumedRatio = deposit > 0n ? Number((totalConsumed * 10000n) / deposit) / 10000 : 0
+
+  // Change 5: filtered findings
+  const displayedFindings = activeFilter
+    ? findings.filter(f => f.severity === activeFilter)
+    : findings
 
   function formatUSDC(amount: bigint): string {
     const n = Number(amount) / 1e6
@@ -168,14 +211,12 @@ export default function App() {
       setDemoTimeLeft(tLeft)
 
       txCounter.current++
-      const txId = txCounter.current
-      const fromHex = Math.random().toString(16).slice(2, 8)
       setNanoTxs(prev => [{
-        id: txId,
+        id: txCounter.current,
         amount: '$0.000080',
         time: new Date().toLocaleTimeString('en', { hour: '2-digit', minute: '2-digit', second: '2-digit' }),
-        from: `0x${fromHex}...`,
-      }, ...prev].slice(0, 12))
+        from: `0x${Math.random().toString(16).slice(2, 8)}`,
+      }, ...prev].slice(0, 10))
     }, 1000)
     newIntervals.push(costInt)
 
@@ -187,6 +228,7 @@ export default function App() {
             newIntervals.forEach(id => window.clearInterval(id))
             setDemoStatus('CLOSED')
             setScanning(false)
+            setAuditReady(false)
           }, 1200)
         }
       }, 3000 + i * 3500)
@@ -206,15 +248,8 @@ export default function App() {
     setScanning(false)
     setDemoMode(false)
     setNanoTxs([])
-  }
-
-  function handleRunAudit() {
-    if (isLive) {
-      coordinator.runAudit(contractInput, true)
-    } else {
-      if (status === 'CLOSED') resetDemo()
-      else startDemo()
-    }
+    setAuditReady(false)
+    setActiveFilter(null)
   }
 
   const sevCounts = { CRITICAL: 0, HIGH: 0, MEDIUM: 0, LOW: 0 }
@@ -226,12 +261,10 @@ export default function App() {
   void baseRate
   void effectiveRate
 
-  // Landing page
   if (!showDashboard) {
     return <LandingPage onLaunch={() => setShowDashboard(true)} />
   }
 
-  // Dashboard
   return (
     <ClickSpark sparkColor="#2563eb" sparkCount={6} sparkRadius={20} sparkSize={8}>
       <div style={{ minHeight: '100vh', background: '#060b18', display: 'flex', flexDirection: 'column' }}>
@@ -247,7 +280,6 @@ export default function App() {
           padding: '0 24px', gap: 16, flexShrink: 0, zIndex: 10,
           position: 'sticky', top: 0,
         }}>
-          {/* Logo — back to landing */}
           <button onClick={() => setShowDashboard(false)} style={{
             background: 'none', border: 'none', cursor: 'pointer',
             display: 'flex', alignItems: 'center', gap: 10, padding: 0,
@@ -264,35 +296,33 @@ export default function App() {
             </div>
           </button>
 
-          {/* Network badge */}
+          {/* Change 1: borderRadius 20→6 */}
           <div style={{
             background: 'rgba(37,99,235,0.1)', border: '1px solid rgba(37,99,235,0.25)',
-            color: '#3b82f6', borderRadius: 20, padding: '3px 10px',
+            color: '#3b82f6', borderRadius: 6, padding: '3px 10px',
             fontSize: 10, fontWeight: 600, letterSpacing: '0.08em',
             fontFamily: 'JetBrains Mono, monospace',
           }}>HEDERA TESTNET</div>
 
           <div style={{ flex: 1 }}/>
 
-          {/* Nav items */}
           <div style={{ display: 'flex', gap: 4 }}>
             {(['Dashboard', 'History', 'Certifications'] as const).map((item, i) => (
               <button key={item} style={{
                 background: i === 0 ? 'rgba(37,99,235,0.12)' : 'transparent',
                 border: i === 0 ? '1px solid rgba(37,99,235,0.25)' : '1px solid transparent',
                 color: i === 0 ? '#3b82f6' : '#475569',
-                borderRadius: 20, padding: '6px 14px',
+                borderRadius: 6, padding: '6px 14px',
                 fontSize: 12, fontWeight: 600, cursor: 'pointer',
                 fontFamily: 'Inter, sans-serif', transition: 'all 0.2s',
               }}>{item}</button>
             ))}
           </div>
 
-          {/* Right side */}
           <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
             <div style={{
               background: 'rgba(16,185,129,0.1)', border: '1px solid rgba(16,185,129,0.25)',
-              color: '#10b981', borderRadius: 20, padding: '5px 12px',
+              color: '#10b981', borderRadius: 6, padding: '5px 12px',
               fontSize: 11, fontWeight: 600,
             }}>World ID ✓</div>
 
@@ -301,14 +331,14 @@ export default function App() {
                 fontFamily: 'JetBrains Mono, monospace', fontSize: 11,
                 color: '#3b82f6', background: 'rgba(37,99,235,0.08)',
                 border: '1px solid rgba(37,99,235,0.2)',
-                borderRadius: 20, padding: '5px 12px',
+                borderRadius: 6, padding: '5px 12px',
               }}>
                 {walletAddress.slice(0,6)}...{walletAddress.slice(-4)}
               </div>
             ) : (
               <button onClick={connectWallet} style={{
                 background: 'linear-gradient(135deg, #2563eb, #1d4ed8)',
-                color: 'white', border: 'none', borderRadius: 20,
+                color: 'white', border: 'none', borderRadius: 6,
                 padding: '7px 16px', fontSize: 12, fontWeight: 700,
                 cursor: 'pointer', fontFamily: 'Inter, sans-serif',
                 boxShadow: '0 0 16px rgba(37,99,235,0.25)',
@@ -324,7 +354,7 @@ export default function App() {
           </div>
         </nav>
 
-        {/* MAIN CONTENT — 2 columns */}
+        {/* MAIN CONTENT */}
         <main style={{
           flex: 1, display: 'grid',
           gridTemplateColumns: '1fr 1fr',
@@ -332,14 +362,14 @@ export default function App() {
           minHeight: 0,
         }}>
 
-          {/* LEFT: Code input */}
+          {/* LEFT COLUMN */}
           <div style={{ display: 'flex', flexDirection: 'column', gap: 12, minHeight: 0 }}>
 
-            {/* Hero banner */}
+            {/* Hero banner — Change 1: borderRadius 10→6 */}
             <div style={{
               background: 'rgba(37,99,235,0.06)',
               border: '1px solid rgba(37,99,235,0.15)',
-              borderRadius: 10, padding: '13px 16px',
+              borderRadius: 6, padding: '13px 16px',
               display: 'flex', alignItems: 'center', justifyContent: 'space-between',
               flexShrink: 0,
             }}>
@@ -355,7 +385,7 @@ export default function App() {
                 </div>
               </div>
               <div style={{
-                width: 40, height: 40, borderRadius: 10,
+                width: 40, height: 40, borderRadius: 6,
                 background: 'rgba(37,99,235,0.1)',
                 border: '1px solid rgba(37,99,235,0.2)',
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
@@ -363,14 +393,68 @@ export default function App() {
               }}>🔍</div>
             </div>
 
-            {/* Code card */}
+            {/* Change 4: Agent selector */}
+            <div style={{
+              background: '#0a0f1e',
+              border: '1px solid rgba(37,99,235,0.2)',
+              borderRadius: 6,
+              overflow: 'hidden',
+              flexShrink: 0,
+            }}>
+              <div style={{
+                padding: '8px 14px',
+                borderBottom: '1px solid rgba(37,99,235,0.1)',
+                fontSize: 10, fontWeight: 700, color: '#64748b',
+                letterSpacing: '0.1em', fontFamily: 'JetBrains Mono, monospace',
+              }}>SELECT AI AGENT</div>
+
+              {AGENTS.map(agent => (
+                <div
+                  key={agent.id}
+                  onClick={() => setSelectedAgent(agent.id)}
+                  style={{
+                    padding: '10px 14px', cursor: 'pointer',
+                    display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+                    background: selectedAgent === agent.id ? 'rgba(37,99,235,0.1)' : 'transparent',
+                    borderLeft: selectedAgent === agent.id ? `3px solid ${agent.color}` : '3px solid transparent',
+                    transition: 'all 0.15s',
+                  }}
+                >
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                      <span style={{
+                        fontSize: 12, fontWeight: 700,
+                        color: selectedAgent === agent.id ? agent.color : '#94a3b8',
+                      }}>{agent.name}</span>
+                      {agent.recommended && (
+                        <span style={{
+                          fontSize: 9, fontWeight: 700,
+                          background: 'rgba(37,99,235,0.15)', color: '#3b82f6',
+                          border: '1px solid rgba(37,99,235,0.25)',
+                          borderRadius: 3, padding: '1px 5px', letterSpacing: '0.05em',
+                        }}>RECOMMENDED</span>
+                      )}
+                    </div>
+                    <div style={{ fontSize: 10, color: '#475569', fontFamily: 'JetBrains Mono, monospace' }}>
+                      {agent.model} · {agent.desc}
+                    </div>
+                  </div>
+                  <div style={{
+                    fontFamily: 'JetBrains Mono, monospace', fontSize: 11, fontWeight: 700,
+                    color: selectedAgent === agent.id ? agent.color : '#475569',
+                    flexShrink: 0, marginLeft: 12,
+                  }}>{agent.price}</div>
+                </div>
+              ))}
+            </div>
+
+            {/* Code card — Change 1: borderRadius 12→6 */}
             <div style={{
               flex: 1, background: 'rgba(6,11,24,0.85)',
               border: '1px solid rgba(37,99,235,0.12)',
-              borderRadius: 12, overflow: 'hidden',
+              borderRadius: 6, overflow: 'hidden',
               display: 'flex', flexDirection: 'column', minHeight: 0,
             }}>
-              {/* Tabs */}
               <div style={{
                 display: 'flex',
                 borderBottom: '1px solid rgba(37,99,235,0.1)',
@@ -392,7 +476,6 @@ export default function App() {
                 ))}
               </div>
 
-              {/* Tab content */}
               <div style={{ flex: 1, position: 'relative', minHeight: 0, overflow: 'hidden' }}>
                 {activeTab === 0 ? (
                   <>
@@ -401,8 +484,7 @@ export default function App() {
                       onChange={e => setSource(e.target.value)}
                       style={{
                         width: '100%', height: '100%',
-                        background: '#03060f',
-                        color: '#60a5fa',
+                        background: '#03060f', color: '#60a5fa',
                         fontFamily: 'JetBrains Mono, monospace',
                         fontSize: 12, lineHeight: 1.7,
                         padding: '16px 16px 16px 14px',
@@ -433,10 +515,8 @@ export default function App() {
                           onChange={e => setContractAddress(e.target.value)}
                           placeholder="7f3a4b8c9d2e1f0a..."
                           style={{
-                            width: '100%',
-                            background: 'rgba(37,99,235,0.05)',
-                            border: '1px solid rgba(37,99,235,0.15)',
-                            borderRadius: 7,
+                            width: '100%', background: 'rgba(37,99,235,0.05)',
+                            border: '1px solid rgba(37,99,235,0.15)', borderRadius: 4,
                             padding: '10px 12px 10px 34px',
                             fontFamily: 'JetBrains Mono, monospace',
                             fontSize: 12, color: '#e2f0f7', outline: 'none',
@@ -455,10 +535,8 @@ export default function App() {
                         NETWORK
                       </label>
                       <select style={{
-                        width: '100%',
-                        background: 'rgba(37,99,235,0.05)',
-                        border: '1px solid rgba(37,99,235,0.15)',
-                        borderRadius: 7,
+                        width: '100%', background: 'rgba(37,99,235,0.05)',
+                        border: '1px solid rgba(37,99,235,0.15)', borderRadius: 4,
                         padding: '10px 12px', fontSize: 12,
                         color: '#e2f0f7', outline: 'none',
                       }}>
@@ -469,9 +547,8 @@ export default function App() {
                     </div>
 
                     <div style={{
-                      background: 'rgba(37,99,235,0.05)',
-                      border: '1px solid rgba(37,99,235,0.12)',
-                      borderRadius: 7, padding: '10px 12px',
+                      background: 'rgba(37,99,235,0.05)', border: '1px solid rgba(37,99,235,0.12)',
+                      borderRadius: 4, padding: '10px 12px',
                       fontSize: 11.5, color: '#475569', lineHeight: 1.6,
                     }}>
                       The scanner will fetch the verified Solidity source from the block explorer and analyze it in real time.
@@ -485,10 +562,9 @@ export default function App() {
             <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexShrink: 0 }}>
               <div style={{
                 display: 'inline-flex', alignItems: 'center', gap: 5,
-                borderRadius: 6, padding: '4px 10px', fontSize: 10,
+                borderRadius: 4, padding: '4px 10px', fontSize: 10,
                 fontWeight: 600, fontFamily: 'JetBrains Mono, monospace',
-                background: 'rgba(6,11,24,0.85)',
-                border: '1px solid rgba(37,99,235,0.12)',
+                background: 'rgba(6,11,24,0.85)', border: '1px solid rgba(37,99,235,0.12)',
                 color: status === 'ACTIVE' ? '#10b981' : status === 'CLOSED' ? '#3b82f6' : '#334155',
               }}>
                 {status === 'ACTIVE' && <div className="pulse-dot" style={{ width: 5, height: 5, borderRadius: '50%', background: '#10b981' }}/>}
@@ -499,45 +575,78 @@ export default function App() {
               </span>
             </div>
 
-            {/* Run button */}
-            <button onClick={handleRunAudit} style={{
-              background: status === 'ACTIVE'
-                ? 'rgba(37,99,235,0.12)'
-                : 'linear-gradient(135deg, #2563eb, #1d4ed8)',
-              color: status === 'ACTIVE' ? '#3b82f6' : 'white',
-              border: status === 'ACTIVE' ? '1px solid rgba(37,99,235,0.3)' : '1px solid transparent',
-              borderRadius: 9,
-              padding: '13px 24px', fontSize: 14, fontWeight: 700,
-              cursor: status === 'ACTIVE' ? 'not-allowed' : 'pointer',
-              fontFamily: 'Inter, sans-serif', letterSpacing: '-0.01em',
-              boxShadow: status === 'ACTIVE' ? 'none' : '0 4px 20px rgba(37,99,235,0.35)',
-              animation: status === 'ACTIVE' ? 'btnGlow 2s infinite' : 'none',
-              display: 'flex', alignItems: 'center',
-              justifyContent: 'center', gap: 8, width: '100%',
-              flexShrink: 0, transition: 'all 0.15s',
-            }}>
-              <span style={{ fontSize: 14 }}>
-                {status === 'IDLE' ? '▶' : status === 'ACTIVE' ? '⏳' : '↩'}
-              </span>
-              {status === 'IDLE' && 'Run Audit'}
-              {status === 'ACTIVE' && 'Scanning in progress...'}
-              {status === 'CLOSED' && 'Scan Again'}
-              {(status === 'OPENING' || status === 'CLOSING') && 'Processing...'}
-              {status === 'TERMINATED' && 'Terminated'}
+            {/* Change 2: Run Audit button (prepare) */}
+            <button
+              onClick={() => {
+                if (status === 'CLOSED') { resetDemo(); setAuditReady(false) }
+                else if (status === 'ACTIVE') { /* do nothing */ }
+                else setAuditReady(!auditReady)
+              }}
+              style={{
+                background: status === 'ACTIVE'
+                  ? 'rgba(37,99,235,0.08)'
+                  : auditReady
+                  ? 'transparent'
+                  : 'linear-gradient(135deg, #1d4ed8, #2563eb)',
+                border: auditReady
+                  ? '1px solid #2563eb'
+                  : status === 'ACTIVE'
+                  ? '1px solid rgba(37,99,235,0.2)'
+                  : '1px solid transparent',
+                color: status === 'ACTIVE' ? '#334155' : auditReady ? '#2563eb' : 'white',
+                borderRadius: 6, padding: '13px 24px',
+                fontSize: 14, fontWeight: 700,
+                cursor: status === 'ACTIVE' ? 'default' : 'pointer',
+                width: '100%', fontFamily: 'Inter, sans-serif',
+                transition: 'all 0.2s',
+                display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
+                flexShrink: 0,
+              }}
+            >
+              {status === 'CLOSED' ? '↩ New Scan'
+                : status === 'ACTIVE' ? '⏳ Scanning in progress...'
+                : auditReady ? '✓ Ready to launch'
+                : '▶ Run Audit'}
             </button>
+
+            {/* Change 2: Launch Analysis button (only when ready) */}
+            {auditReady && status === 'IDLE' && (
+              <button
+                onClick={() => {
+                  setAuditReady(false)
+                  if (isLive) coordinator.runAudit(contractInput, true)
+                  else startDemo()
+                }}
+                style={{
+                  background: 'linear-gradient(135deg, #059669, #10b981)',
+                  color: 'white', border: 'none',
+                  borderRadius: 6, padding: '16px 24px',
+                  fontSize: 15, fontWeight: 800, cursor: 'pointer',
+                  width: '100%', fontFamily: 'Inter, sans-serif',
+                  letterSpacing: '-0.01em',
+                  boxShadow: '0 0 24px rgba(16,185,129,0.4)',
+                  animation: 'btnGlow 1.5s infinite',
+                  display: 'flex', alignItems: 'center',
+                  justifyContent: 'center', gap: 10,
+                  flexShrink: 0,
+                }}
+              >
+                ⚡ Launch Analysis
+              </button>
+            )}
           </div>
 
           {/* RIGHT: Findings panel */}
           <div style={{ display: 'flex', flexDirection: 'column', minHeight: 0 }}>
 
-            {status === 'IDLE' ? (
-              /* Idle placeholder */
+            {status === 'IDLE' && !auditReady ? (
+              /* Idle placeholder — Change 1: borderRadius 12→6 */
               <div style={{
                 flex: 1, display: 'flex', flexDirection: 'column',
                 alignItems: 'center', justifyContent: 'center',
                 background: 'rgba(37,99,235,0.03)',
                 border: '1px dashed rgba(37,99,235,0.12)',
-                borderRadius: 12, gap: 16,
+                borderRadius: 6, gap: 16,
               }}>
                 <div style={{ width: 56, height: 56, position: 'relative', opacity: 0.25 }}>
                   <div style={{ position: 'absolute', top: 0, left: 0, width: 16, height: 16, borderTop: '2px solid #2563eb', borderLeft: '2px solid #2563eb' }}/>
@@ -557,7 +666,7 @@ export default function App() {
               /* Findings panel */
               <div style={{ display: 'flex', flexDirection: 'column', gap: 12, minHeight: 0, height: '100%' }}>
 
-                {/* MagicBento severity counters */}
+                {/* Change 5: MagicBento clickable filter cards */}
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr 1fr', gap: 8, flexShrink: 0 }}>
                   {([
                     { key: 'CRITICAL', label: 'Critical', color: '#ef4444', glow: '239,68,68' },
@@ -565,45 +674,82 @@ export default function App() {
                     { key: 'MEDIUM',   label: 'Medium',   color: '#f59e0b', glow: '245,158,11' },
                     { key: 'LOW',      label: 'Low',      color: '#3b82f6', glow: '59,130,246' },
                   ] as const).map(s => (
-                    <BentoCard key={s.key} glowColor={s.glow} style={{ borderTop: `2px solid ${s.color}`, padding: '10px 12px' }}>
+                    <BentoCard
+                      key={s.key}
+                      glowColor={s.glow}
+                      onClick={() => setActiveFilter(activeFilter === s.key ? null : s.key)}
+                      style={{
+                        borderTop: `2px solid ${s.color}`,
+                        padding: '10px 12px',
+                        cursor: 'pointer',
+                        outline: activeFilter === s.key ? `2px solid ${s.color}` : '2px solid transparent',
+                        outlineOffset: '-2px',
+                        opacity: activeFilter && activeFilter !== s.key ? 0.45 : 1,
+                        transition: 'outline 0.15s, opacity 0.15s, transform 0.2s',
+                      }}
+                    >
                       <div style={{ fontSize: 22, fontWeight: 900, color: s.color, fontFamily: 'JetBrains Mono, monospace', lineHeight: 1 }}>
                         {sevCounts[s.key]}
                       </div>
                       <div style={{ fontSize: 10, color: '#475569', fontWeight: 600, marginTop: 5, letterSpacing: '0.05em' }}>
                         {s.label}
+                        {activeFilter === s.key && <span style={{ marginLeft: 5, color: s.color }}>▼</span>}
                       </div>
                     </BentoCard>
                   ))}
                 </div>
 
-                {/* Findings list */}
+                {/* Findings list — Change 1: borderRadius 12→6 */}
                 <div style={{
                   flex: 1, background: 'rgba(6,11,24,0.85)',
                   border: '1px solid rgba(37,99,235,0.12)',
-                  borderRadius: 12, overflow: 'hidden',
+                  borderRadius: 6, overflow: 'hidden',
                   display: 'flex', flexDirection: 'column', minHeight: 0,
                 }}>
                   <div style={{
-                    padding: '12px 14px',
+                    padding: '10px 14px',
                     borderBottom: '1px solid rgba(37,99,235,0.1)',
                     display: 'flex', alignItems: 'center', justifyContent: 'space-between',
                     flexShrink: 0,
                   }}>
-                    <div style={{ fontSize: 12, fontWeight: 600, color: '#e2f0f7' }}>
-                      Security Findings
-                      {findings.length > 0 && (
-                        <span style={{
-                          marginLeft: 8, background: '#2563eb', color: 'white',
-                          borderRadius: 5, padding: '1px 7px', fontSize: 10, fontWeight: 700,
-                        }}>{findings.length}</span>
-                      )}
-                    </div>
-                    {status === 'ACTIVE' && (
-                      <div style={{ display: 'flex', alignItems: 'center', gap: 5, fontSize: 11, color: '#10b981', fontFamily: 'JetBrains Mono, monospace' }}>
-                        <div className="pulse-dot" style={{ width: 5, height: 5, borderRadius: '50%', background: '#10b981' }}/>
-                        scanning
+                    {/* Change 5: filtered header */}
+                    {activeFilter ? (
+                      <div style={{ fontSize: 12, fontWeight: 600, color: '#94a3b8' }}>
+                        Showing: <span style={{ color: SEV[activeFilter]?.text }}>{activeFilter}</span>
+                        <span style={{ color: '#475569', fontWeight: 400 }}> ({displayedFindings.length})</span>
+                      </div>
+                    ) : (
+                      <div style={{ fontSize: 12, fontWeight: 600, color: '#e2f0f7' }}>
+                        Security Findings
+                        {findings.length > 0 && (
+                          <span style={{
+                            marginLeft: 8, background: '#2563eb', color: 'white',
+                            borderRadius: 4, padding: '1px 7px', fontSize: 10, fontWeight: 700,
+                          }}>{findings.length}</span>
+                        )}
                       </div>
                     )}
+
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                      {/* Change 5: clear filter button */}
+                      {activeFilter && (
+                        <button
+                          onClick={() => setActiveFilter(null)}
+                          style={{
+                            background: 'none', border: '1px solid rgba(37,99,235,0.3)',
+                            color: '#3b82f6', borderRadius: 4,
+                            padding: '2px 8px', fontSize: 10,
+                            cursor: 'pointer', fontFamily: 'JetBrains Mono, monospace', fontWeight: 600,
+                          }}
+                        >✕ clear</button>
+                      )}
+                      {status === 'ACTIVE' && (
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 5, fontSize: 11, color: '#10b981', fontFamily: 'JetBrains Mono, monospace' }}>
+                          <div className="pulse-dot" style={{ width: 5, height: 5, borderRadius: '50%', background: '#10b981' }}/>
+                          scanning
+                        </div>
+                      )}
+                    </div>
                   </div>
 
                   <div className="findings-list" style={{
@@ -611,9 +757,9 @@ export default function App() {
                     padding: 10, display: 'flex',
                     flexDirection: 'column', gap: 7,
                   }}>
-                    {findings.length === 0
+                    {displayedFindings.length === 0
                       ? <EmptyState scanning={status === 'ACTIVE'}/>
-                      : findings.map((f, i) => <FindingCard key={`${f.title}-${i}`} finding={f}/>)
+                      : displayedFindings.map((f, i) => <FindingCard key={`${f.title}-${i}`} finding={f}/>)
                     }
                   </div>
                 </div>
@@ -635,7 +781,6 @@ export default function App() {
         }}>
 
           <div style={{ display: 'flex', alignItems: 'center', gap: 18 }}>
-
             <div style={{ flexShrink: 0, minWidth: 120 }}>
               <div style={{ fontSize: 17, fontWeight: 700, lineHeight: 1, color: '#2563eb' }}>
                 <NanoCounter value={totalConsumed} />
@@ -650,18 +795,11 @@ export default function App() {
               </div>
             </div>
 
-            {/* Progress bar */}
             <div style={{ flex: 1 }}>
               {status === 'IDLE' ? (
-                <div style={{
-                  height: 4, background: 'rgba(37,99,235,0.08)', borderRadius: 2,
-                  border: '1px dashed rgba(37,99,235,0.15)',
-                }}/>
+                <div style={{ height: 4, background: 'rgba(37,99,235,0.08)', borderRadius: 2, border: '1px dashed rgba(37,99,235,0.15)' }}/>
               ) : (
-                <div style={{
-                  height: 4, background: 'rgba(37,99,235,0.08)', borderRadius: 2,
-                  position: 'relative', overflow: 'visible',
-                }}>
+                <div style={{ height: 4, background: 'rgba(37,99,235,0.08)', borderRadius: 2, position: 'relative', overflow: 'visible' }}>
                   <div style={{
                     height: '100%', borderRadius: 2,
                     background: 'linear-gradient(90deg, #1d4ed8, #2563eb, #3b82f6)',
@@ -671,8 +809,7 @@ export default function App() {
                     {status === 'ACTIVE' && (
                       <div className="cost-dot" style={{
                         position: 'absolute', right: -5, top: '50%',
-                        width: 9, height: 9, borderRadius: '50%',
-                        background: '#3b82f6',
+                        width: 9, height: 9, borderRadius: '50%', background: '#3b82f6',
                       }}/>
                     )}
                   </div>
@@ -680,15 +817,12 @@ export default function App() {
               )}
             </div>
 
-            {/* Stats */}
             <div style={{
               flexShrink: 0, display: 'flex', alignItems: 'center', gap: 14,
               opacity: status === 'IDLE' ? 0.25 : 1, transition: 'opacity 0.3s',
             }}>
               <div style={{ textAlign: 'center' }}>
-                <div style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 13, fontWeight: 700, color: '#2563eb' }}>
-                  {authCount}
-                </div>
+                <div style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 13, fontWeight: 700, color: '#2563eb' }}>{authCount}</div>
                 <div style={{ fontSize: 9, color: '#334155', letterSpacing: '0.06em', textTransform: 'uppercase' as const }}>sigs</div>
               </div>
               <div style={{ width: 1, height: 20, background: 'rgba(37,99,235,0.15)' }}/>
@@ -712,37 +846,41 @@ export default function App() {
             </div>
           </div>
 
-          {/* Nano-tx feed */}
+          {/* Change 3: Fixed nano-tx feed */}
           <div style={{
-            display: 'flex', gap: 5, overflow: 'hidden',
-            alignItems: 'center', height: 20,
+            display: 'flex', gap: 6, alignItems: 'center',
+            height: 24, overflow: 'hidden', position: 'relative', flex: 1,
           }}>
             {status === 'IDLE' ? (
-              <span style={{ fontSize: 10, color: '#1e293b', fontFamily: 'JetBrains Mono, monospace' }}>
+              <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 10, color: '#334155' }}>
                 — nanopayment stream will appear here
               </span>
-            ) : nanoTxs.map((tx, i) => (
-              <div key={tx.id} style={{
-                display: 'inline-flex', alignItems: 'center', gap: 5,
-                background: 'rgba(37,99,235,0.08)',
-                border: '1px solid rgba(37,99,235,0.15)',
-                borderRadius: 5, padding: '2px 8px', flexShrink: 0,
-                animation: i === 0 ? 'txIn 0.25s ease forwards' : 'none',
-                opacity: Math.max(0.2, 1 - i * 0.1),
-              }}>
-                <div style={{
-                  width: 4, height: 4, borderRadius: '50%',
-                  background: i === 0 ? '#2563eb' : '#1d4ed8', flexShrink: 0,
-                }}/>
-                <span style={{
-                  fontFamily: 'JetBrains Mono, monospace', fontSize: 9,
-                  fontWeight: 600, color: '#2563eb',
-                }}>{tx.amount}</span>
-                <span style={{
-                  fontFamily: 'JetBrains Mono, monospace', fontSize: 9, color: '#334155',
-                }}>{tx.time}</span>
+            ) : nanoTxs.length === 0 ? (
+              <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 10, color: '#334155' }}>
+                Initializing stream...
+              </span>
+            ) : (
+              <div style={{ display: 'flex', gap: 6, alignItems: 'center', animation: 'slideLeft 0.3s ease', width: '100%', overflow: 'hidden' }}>
+                {nanoTxs.slice(0, 8).map((tx, i) => (
+                  <div key={tx.id} style={{
+                    display: 'inline-flex', alignItems: 'center', gap: 4,
+                    background: i === 0 ? 'rgba(16,185,129,0.15)' : 'rgba(37,99,235,0.08)',
+                    border: `1px solid ${i === 0 ? 'rgba(16,185,129,0.3)' : 'rgba(37,99,235,0.15)'}`,
+                    borderRadius: 4, padding: '2px 8px', flexShrink: 0,
+                    opacity: Math.max(0.25, 1 - i * 0.1),
+                    animation: i === 0 ? 'txIn 0.3s ease forwards' : 'none',
+                  }}>
+                    <div style={{ width: 5, height: 5, borderRadius: '50%', background: i === 0 ? '#10b981' : '#2563eb', flexShrink: 0 }}/>
+                    <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 10, fontWeight: 700, color: i === 0 ? '#10b981' : '#3b82f6', whiteSpace: 'nowrap' }}>
+                      {tx.amount}
+                    </span>
+                    <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 9, color: '#64748b', whiteSpace: 'nowrap' }}>
+                      {tx.time}
+                    </span>
+                  </div>
+                ))}
               </div>
-            ))}
+            )}
           </div>
         </div>
 
