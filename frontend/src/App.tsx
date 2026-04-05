@@ -372,7 +372,7 @@ export default function App() {
                 onChange={e => setSelectedAgent(e.target.value)}
               >
                 <option value="basic">Basic Agent — GPT-4o mini · $0.00005/s</option>
-                <option value="pro">Pro Agent ⭐ — Claude Sonnet · $0.00015/s (Recommended)</option>
+                <option value="pro">Pro Agent — Claude Sonnet · $0.00015/s (Recommended)</option>
                 <option value="enterprise">Enterprise Agent — Claude Opus · $0.00040/s</option>
               </select>
               <div style={{

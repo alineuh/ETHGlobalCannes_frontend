@@ -125,14 +125,14 @@ export function useCoordinator(): CoordinatorHook {
             break
 
           case 'error':
-            console.error('[KronoScan] Coordinator error:', msg)
+            console.error('[Audithor] Coordinator error:', msg)
             break
 
           default:
             break
         }
       } catch (err) {
-        console.error('[KronoScan] Failed to parse message:', err)
+        console.error('[Audithor] Failed to parse message:', err)
       }
     }
   }, [])
@@ -150,7 +150,7 @@ export function useCoordinator(): CoordinatorHook {
   const runAudit = useCallback((input: ContractInput, verified: boolean) => {
     const ws = wsRef.current
     if (!ws || ws.readyState !== WebSocket.OPEN) {
-      console.warn('[KronoScan] WebSocket not open')
+      console.warn('[Audithor] WebSocket not open')
       return
     }
     setState(prev => ({
