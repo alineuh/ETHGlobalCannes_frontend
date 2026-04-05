@@ -361,31 +361,30 @@ export default function App() {
           {/* LEFT COLUMN */}
           <div style={{ display: 'flex', flexDirection: 'column', gap: 12, minHeight: 0 }}>
 
-            {/* Hero banner — Change 1: borderRadius 10→6 */}
+            {/* Hero banner — compact */}
             <div style={{
               background: 'rgba(37,99,235,0.06)',
               border: '1px solid rgba(37,99,235,0.15)',
-              borderRadius: 6, padding: '13px 16px',
+              borderRadius: 8, padding: '10px 14px',
               display: 'flex', alignItems: 'center', justifyContent: 'space-between',
               flexShrink: 0,
             }}>
               <div>
-                <div style={{ fontSize: 10, color: '#475569', fontWeight: 600, letterSpacing: '0.1em', marginBottom: 3, fontFamily: 'JetBrains Mono, monospace' }}>
+                <div style={{ fontSize: 9, color: '#475569', fontFamily: 'JetBrains Mono, monospace', letterSpacing: '0.1em', fontWeight: 600, marginBottom: 3 }}>
                   SMART CONTRACT AUDIT
                 </div>
-                <div style={{ fontSize: 16, fontWeight: 700, color: '#e2f0f7', letterSpacing: '-0.02em' }}>
-                  AI-Powered Security
+                <div style={{ fontSize: 14, fontWeight: 700, color: '#e2f0f7', letterSpacing: '-0.01em' }}>
+                  AI-Powered Security Scanner
                 </div>
-                <div style={{ fontSize: 11, color: '#475569', marginTop: 2 }}>
+                <div style={{ fontSize: 10, color: '#475569', marginTop: 2 }}>
                   Pay per second · Verified by World ID
                 </div>
               </div>
               <div style={{
-                width: 40, height: 40, borderRadius: 6,
-                background: 'rgba(37,99,235,0.1)',
-                border: '1px solid rgba(37,99,235,0.2)',
+                width: 32, height: 32, borderRadius: 6,
+                background: 'rgba(37,99,235,0.12)',
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
-                fontSize: 18,
+                fontSize: 14, flexShrink: 0,
               }}>🔍</div>
             </div>
 
