@@ -329,7 +329,7 @@ export default function App() {
         }}>
 
           {/* LEFT COLUMN */}
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 12, minHeight: 0 }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 12, height: 'calc(100vh - 160px)', minHeight: 0 }}>
 
             {/* Hero banner — compact */}
             <div style={{
@@ -385,12 +385,13 @@ export default function App() {
               </div>
             </div>
 
-            {/* Code card — Change 1: borderRadius 12→6 */}
+            {/* Code card */}
             <div style={{
-              flex: 1, background: 'rgba(6,11,24,0.85)',
-              border: '1px solid rgba(37,99,235,0.12)',
-              borderRadius: 6, overflow: 'hidden',
-              display: 'flex', flexDirection: 'column', minHeight: 0,
+              flex: 1, minHeight: 0,
+              background: '#0a0f1e',
+              border: '1px solid rgba(37,99,235,0.15)',
+              borderRadius: 8, overflow: 'hidden',
+              display: 'flex', flexDirection: 'column',
             }}>
               <div style={{
                 display: 'flex',
@@ -420,14 +421,15 @@ export default function App() {
                       value={source}
                       onChange={e => setSource(e.target.value)}
                       style={{
-                        width: '100%', height: '100%',
-                        background: '#03060f', color: '#60a5fa',
+                        flex: 1, width: '100%',
+                        background: '#060b18', color: '#8ab4c8',
                         fontFamily: 'JetBrains Mono, monospace',
-                        fontSize: 12, lineHeight: 1.7,
+                        fontSize: 12.5, lineHeight: 1.7,
                         padding: '16px 16px 16px 14px',
-                        borderLeft: '2px solid rgba(37,99,235,0.4)',
+                        borderLeft: '3px solid #2563eb',
                         border: 'none', outline: 'none',
                         resize: 'none', display: 'block',
+                        minHeight: 280,
                       }}
                       className="code-content"
                       spellCheck={false}
