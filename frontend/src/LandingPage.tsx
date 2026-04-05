@@ -676,16 +676,16 @@ export default function LandingPage({ onLaunch }: { onLaunch: () => void }) {
           </div>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 20, marginBottom: 40 }}>
             <PricingCard
-              name="Basic Agent" model="DeepSeek-V3 + Gemini 1.5 Flash" price="$0.00005/s" color="#60a5fa"
-              features={['StaticAgent + InjectionAgent', 'Pattern matching, injection & crypto', 'SQL injection, XSS, SSRF', 'Hardcoded secrets, weak hashing']}
+              name="Basic Agent" model="InjectionAgent · CryptoAgent — DeepSeek-V3" price="$0.00005/s" color="#60a5fa"
+              features={['InjectionAgent — SQL, XSS, SSRF, Command injection', 'CryptoAgent — hardcoded secrets, weak hashing', 'Smart contract: StaticAgent pattern matching', 'Auto-detected pipeline']}
             />
             <PricingCard
               name="Pro Agent" model="DeepSeek-V3 + Gemini 1.5 Flash" price="$0.00015/s" color="#2563eb" recommended
-              features={['Full pipeline — all 7 agents', 'SemanticAgent contextual reasoning', 'AuthAgent — JWT, IDOR, OAuth', 'DataLeakAgent — CORS, info disclosure', 'ValidatorAgent dedup & PoC']}
+              features={['All Basic agents', 'AuthAgent (Gemini 1.5 Flash) — JWT, IDOR, OAuth', 'DataLeakAgent (Gemini 1.5 Flash) — CORS, PII leaks', 'SemanticAgent — contextual SC reasoning', 'Full classic + smart contract pipelines']}
             />
             <PricingCard
-              name="Enterprise Agent" model="Llama 3.3 70B ValidatorAgent" price="$0.00040/s" color="#1d4ed8"
-              features={['All agents + ValidatorAgent', 'PoC generation per finding', 'Cross-contract analysis', 'Economic attack modeling', 'Adversarial simulation']}
+              name="Enterprise Agent" model="All models + Groq / Llama 3.3 70B" price="$0.00040/s" color="#1d4ed8"
+              features={['All Pro agents', 'ValidatorAgent (Llama 3.3 70B) — dedup & PoC', 'False positive filtering', 'PoC sketch generation per finding', 'Severity promotion & cross-agent correlation']}
             />
           </div>
           {/* Criticality bonuses */}
