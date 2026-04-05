@@ -287,17 +287,13 @@ function PricingCard({ name, model, price, features, recommended, color }: {
 /* ── MAIN COMPONENT ── */
 export default function LandingPage({ onLaunch }: { onLaunch: () => void }) {
   const [ctaHovered, setCtaHovered] = useState(false);
-  const { ref: kpiRef, visible: kpiVisible } = useVisible(0.1);
-
-  // kpiVisible is used to trigger animations in child KpiCard components via IntersectionObserver
-  void kpiVisible;
 
   return (
     <div style={{
-      minHeight: '100vh',
       background: '#060b18',
       color: '#e2f0f7',
-      fontFamily: 'Sora, sans-serif',
+      fontFamily: "'Sora', sans-serif",
+      overflowY: 'auto',
       overflowX: 'hidden',
     }}>
 
@@ -459,30 +455,149 @@ export default function LandingPage({ onLaunch }: { onLaunch: () => void }) {
         </div>
       </section>
 
-      {/* ── KPIs ── */}
-      <section ref={kpiRef} style={{
-        padding: '72px 48px',
-        background: 'rgba(37,99,235,0.03)',
+      {/* ── KPI MARKET ── */}
+      <section style={{
+        padding: '80px 64px',
+        background: '#0a0f1e',
         borderTop: '1px solid rgba(37,99,235,0.1)',
         borderBottom: '1px solid rgba(37,99,235,0.1)',
       }}>
-        <div style={{ maxWidth: 1100, margin: '0 auto' }}>
-          <div style={{ textAlign: 'center', marginBottom: 48 }}>
-            <div style={{ fontSize: 11, color: '#2563eb', fontFamily: 'JetBrains Mono, monospace', fontWeight: 700, letterSpacing: '0.12em', marginBottom: 12 }}>
-              THE PROBLEM WE SOLVE
+        <div style={{ maxWidth: 1100, margin: '0 auto', display: 'grid', gridTemplateColumns: '1fr 2fr', gap: 64, alignItems: 'start' }}>
+
+          {/* Left: title */}
+          <div>
+            <div style={{ fontSize: 11, color: '#2563eb', fontFamily: 'JetBrains Mono, monospace', fontWeight: 700, letterSpacing: '0.12em', marginBottom: 16 }}>
+              WHY IT MATTERS
             </div>
-            <h2 style={{ fontSize: 32, fontWeight: 800, letterSpacing: '-0.03em' }}>
-              Web3 security is <span style={{ color: '#ef4444' }}>broken.</span>
+            <h2 style={{ fontSize: 36, fontWeight: 900, letterSpacing: '-0.03em', lineHeight: 1.15, color: '#e2f0f7', marginBottom: 20 }}>
+              Web3 security is broken.
             </h2>
-            <p style={{ fontSize: 14, color: '#475569', marginTop: 12 }}>
-              Every year, billions are lost to vulnerabilities that could have been caught.
+            <p style={{ fontSize: 14, color: '#475569', lineHeight: 1.7 }}>
+              Every year, billions are lost to smart contract vulnerabilities that could have been caught.
+              The tools to prevent this exist — but they're inaccessible, slow, and expensive.
+              Audithor changes that.
             </p>
           </div>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 16 }}>
-            <KpiCard value={2} suffix=".2B$" label="Stolen in 2024" sub="via smart contract vulnerabilities" />
-            <KpiCard value={85} suffix="%" label="Were preventable" sub="exploited known patterns" />
-            <KpiCard value={500} suffix="M$" label="Audit market 2024" sub="growing 35% per year" />
-            <KpiCard value={15000} suffix="+" label="Active projects" sub="deploying smart contracts" />
+
+          {/* Right: 2x2 big number grid */}
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
+            {[
+              { num: '$2.2B', label: 'Stolen in 2024', sub: 'via smart contract vulnerabilities' },
+              { num: '85%', label: 'Were preventable', sub: 'exploited known vulnerability patterns' },
+              { num: '$500M', label: 'Audit market 2024', sub: 'growing 35% year over year' },
+              { num: '15,000+', label: 'Active Web3 projects', sub: 'deploying smart contracts today' },
+            ].map((kpi, i) => (
+              <div key={kpi.label} style={{
+                background: i === 1 || i === 2 ? '#0f172a' : '#0d1422',
+                border: '1px solid rgba(37,99,235,0.12)',
+                borderRadius: 8,
+                padding: '32px 28px',
+                transition: 'border-color 0.2s',
+              }}>
+                <div style={{
+                  fontSize: 52,
+                  fontWeight: 900,
+                  letterSpacing: '-0.04em',
+                  lineHeight: 1,
+                  color: '#e2f0f7',
+                  fontFamily: "'Sora', sans-serif",
+                  marginBottom: 16,
+                }}>{kpi.num}</div>
+                <div style={{ fontSize: 16, fontWeight: 700, color: '#e2f0f7', marginBottom: 6 }}>{kpi.label}</div>
+                <div style={{ fontSize: 13, color: '#475569', lineHeight: 1.5 }}>{kpi.sub}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── AUDITHOR NUMBERS ── */}
+      <section style={{
+        padding: '80px 64px',
+        background: '#060b18',
+      }}>
+        <div style={{ maxWidth: 1100, margin: '0 auto' }}>
+          <div style={{ textAlign: 'center', marginBottom: 56 }}>
+            <div style={{ fontSize: 11, color: '#2563eb', fontFamily: 'JetBrains Mono, monospace', fontWeight: 700, letterSpacing: '0.12em', marginBottom: 14 }}>
+              AUDITHOR BY THE NUMBERS
+            </div>
+            <h2 style={{ fontSize: 36, fontWeight: 900, letterSpacing: '-0.03em', color: '#e2f0f7' }}>
+              Fast, cheap, and <span style={{ background: 'linear-gradient(135deg, #60a5fa, #2563eb)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>verifiable.</span>
+            </h2>
+          </div>
+
+          {/* 4 stats in a row */}
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 1, background: 'rgba(37,99,235,0.1)', borderRadius: 8, overflow: 'hidden' }}>
+            {[
+              { num: '$0.01', label: 'Minimum scan cost', sub: 'vs $15,000+ traditional' },
+              { num: '60s', label: 'Max scan duration', sub: 'vs 4-8 weeks traditional' },
+              { num: '4', label: 'Specialized AI agents', sub: 'working in parallel' },
+              { num: '86%', label: 'Gross margin', sub: 'on pay-per-scan revenue' },
+            ].map(stat => (
+              <div key={stat.label} style={{
+                padding: '40px 28px',
+                background: '#060b18',
+                textAlign: 'center',
+              }}>
+                <div style={{
+                  fontSize: 48, fontWeight: 900,
+                  letterSpacing: '-0.04em', lineHeight: 1,
+                  background: 'linear-gradient(135deg, #60a5fa, #2563eb)',
+                  WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent',
+                  marginBottom: 14, fontFamily: "'Sora', sans-serif",
+                }}>{stat.num}</div>
+                <div style={{ fontSize: 13, fontWeight: 700, color: '#e2f0f7', marginBottom: 6 }}>{stat.label}</div>
+                <div style={{ fontSize: 11, color: '#334155' }}>{stat.sub}</div>
+              </div>
+            ))}
+          </div>
+
+          {/* 3 sponsor blocks */}
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 16, marginTop: 16 }}>
+            {[
+              {
+                logo: '⬡', name: 'Hedera',
+                prize: '$2,500', track: 'Tokenization + No Solidity',
+                desc: 'Immutable audit proof via HCS. Nanopayments at 10,000 TPS. Governed by IBM, Google, Deutsche Bank.',
+                color: '#2563eb',
+              },
+              {
+                logo: '🔗', name: 'Chainlink CRE',
+                prize: '$2,000', track: 'Confidential HTTP',
+                desc: 'Audit report delivered encrypted inside a TEE enclave. Tamper-proof. Unreadable by anyone in transit.',
+                color: '#60a5fa',
+              },
+              {
+                logo: '🦄', name: 'Uniswap',
+                prize: '$5,000', track: 'Best API Integration',
+                desc: 'Pay in any ERC-20 token. Uniswap routes automatically. No pre-buying required. Zero friction.',
+                color: '#9333ea',
+              },
+            ].map(s => (
+              <div key={s.name} style={{
+                background: '#0a0f1e',
+                border: '1px solid rgba(37,99,235,0.15)',
+                borderRadius: 8, padding: '24px 20px',
+              }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                    <span style={{ fontSize: 20 }}>{s.logo}</span>
+                    <span style={{ fontSize: 15, fontWeight: 800, color: '#e2f0f7' }}>{s.name}</span>
+                  </div>
+                  <div style={{
+                    background: 'rgba(37,99,235,0.1)',
+                    border: '1px solid rgba(37,99,235,0.25)',
+                    borderRadius: 4, padding: '3px 8px',
+                    fontSize: 11, fontWeight: 700, color: '#60a5fa',
+                    fontFamily: 'JetBrains Mono, monospace',
+                  }}>{s.prize}</div>
+                </div>
+                <div style={{ fontSize: 10, color: '#2563eb', fontFamily: 'JetBrains Mono, monospace', fontWeight: 700, letterSpacing: '0.08em', marginBottom: 10 }}>
+                  {s.track}
+                </div>
+                <div style={{ fontSize: 12, color: '#475569', lineHeight: 1.6 }}>{s.desc}</div>
+              </div>
+            ))}
           </div>
         </div>
       </section>
