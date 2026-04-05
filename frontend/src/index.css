@@ -162,3 +162,12 @@ textarea, input, select {
   color: #e2f0f7;
   padding: 8px;
 }
+
+/* BorderGlow overlay */
+.glow-overlay {
+  opacity: 0 !important;
+  transition: opacity 0.3s !important;
+}
+div:hover > .glow-overlay {
+  opacity: 1 !important;
+}

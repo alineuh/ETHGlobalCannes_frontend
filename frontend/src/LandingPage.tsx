@@ -2,6 +2,8 @@ import { useState, useEffect, useRef } from 'react';
 import RippleGrid from './components/RippleGrid';
 import AudithorLogo from './components/AudithorLogo';
 import ClickSpark from './components/ClickSpark';
+import PillNav from './components/PillNav';
+import BorderGlow from './components/BorderGlow';
 
 /* ── Animated counter hook ── */
 function useCountUp(target: number, duration = 1800, start = false) {
@@ -67,19 +69,12 @@ function KpiCard({ value, suffix, label, sub }: {
 function FeatureCard({ icon, title, desc, tag }: {
   icon: string; title: string; desc: string; tag?: string;
 }) {
-  const [hovered, setHovered] = useState(false);
   return (
-    <div
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => setHovered(false)}
-      style={{
-        padding: '24px 20px',
-        background: hovered ? 'rgba(37,99,235,0.08)' : 'rgba(255,255,255,0.02)',
-        border: `1px solid ${hovered ? 'rgba(37,99,235,0.35)' : 'rgba(37,99,235,0.12)'}`,
-        borderRadius: 8,
-        transition: 'all 0.2s',
-        cursor: 'default',
-      }}
+    <BorderGlow
+      backgroundColor="rgba(10,15,30,0.8)"
+      glowColor="220 80 60"
+      borderRadius={8}
+      style={{ padding: '24px 20px' }}
     >
       <div style={{ fontSize: 28, marginBottom: 14 }}>{icon}</div>
       <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8 }}>
@@ -94,7 +89,7 @@ function FeatureCard({ icon, title, desc, tag }: {
         )}
       </div>
       <div style={{ fontSize: 12, color: '#64748b', lineHeight: 1.6 }}>{desc}</div>
-    </div>
+    </BorderGlow>
   );
 }
 
@@ -155,8 +150,19 @@ function ArchDiagram() {
           borderRadius: 6, padding: '10px 48px',
           fontSize: 13, fontWeight: 700, color: '#93c5fd',
         }}>
-          ⚡ AI-Powered — 4 Specialized Agents
+          ⚡ AI-Powered — 7 Agents across 2 Auto-Detected Pipelines
         </div>
+      </div>
+
+      {/* Auto-detect note */}
+      <div style={{ textAlign: 'center', margin: '10px 0 0' }}>
+        <span style={{
+          fontSize: 11, color: '#475569',
+          fontFamily: 'JetBrains Mono, monospace',
+          fontStyle: 'italic',
+        }}>
+          Pipeline auto-detected from your code — no configuration needed
+        </span>
       </div>
 
       {/* 3 columns lines */}
@@ -172,16 +178,16 @@ function ArchDiagram() {
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 16 }}>
         {[
           {
-            title: 'Smart Contract Code',
-            items: ['Reentrancy', 'Access Control', 'Overflow / Underflow', 'Flash Loan Vectors'],
+            title: 'Smart Contract Pipeline',
+            items: ['StaticAgent — pattern & AST', 'SemanticAgent — contextual reasoning', 'Parallel execution', 'ValidatorAgent (Llama 3.3 70B)'],
           },
           {
-            title: 'Payment Stream',
-            items: ['Per-second billing', 'EIP-3009 signatures', 'Auto-refund onchain', 'Multi-token via Uniswap'],
+            title: 'Classic Code Pipeline',
+            items: ['InjectionAgent (DeepSeek-V3)', 'AuthAgent (Gemini 1.5 Flash)', 'CryptoAgent (DeepSeek-V3)', 'DataLeakAgent (Gemini 1.5 Flash)', 'Sequential execution'],
           },
           {
-            title: 'Trust & Privacy',
-            items: ['Chainlink TEE delivery', 'Hedera HCS proof', 'World ID verification', 'Audit certification'],
+            title: 'Trust & Delivery',
+            items: ['Chainlink TEE delivery', 'Hedera HCS audit proof', 'World ID verification', 'Audit certification'],
           },
         ].map(col => (
           <div key={col.title} style={{
@@ -213,7 +219,7 @@ function ArchDiagram() {
         {[
           { num: '$0.01', label: 'Minimum scan cost' },
           { num: '60s', label: 'Max scan duration' },
-          { num: '4', label: 'Specialized AI agents' },
+          { num: '7', label: 'AI agents' },
           { num: '∞', label: 'CI/CD scans per day' },
         ].map((s, i) => (
           <div key={s.label} style={{
@@ -238,22 +244,15 @@ function PricingCard({ name, model, price, features, recommended, color }: {
   name: string; model: string; price: string;
   features: string[]; recommended?: boolean; color: string;
 }) {
-  const [hovered, setHovered] = useState(false);
   return (
-    <div
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => setHovered(false)}
+    <BorderGlow
+      backgroundColor={recommended ? 'rgba(37,99,235,0.08)' : '#0a0f1e'}
+      glowColor="220 80 60"
+      borderRadius={8}
       style={{
         padding: '24px 20px',
-        background: recommended
-          ? 'rgba(37,99,235,0.1)'
-          : 'rgba(255,255,255,0.02)',
-        border: `2px solid ${recommended
-          ? 'rgba(37,99,235,0.5)'
-          : hovered ? 'rgba(37,99,235,0.25)' : 'rgba(37,99,235,0.12)'}`,
-        borderRadius: 8,
-        transition: 'all 0.2s',
         position: 'relative',
+        border: recommended ? '2px solid rgba(37,99,235,0.5)' : '1px solid rgba(37,99,235,0.15)',
       }}
     >
       {recommended && (
@@ -280,7 +279,7 @@ function PricingCard({ name, model, price, features, recommended, color }: {
           <span style={{ fontSize: 12, color: '#94a3b8' }}>{f}</span>
         </div>
       ))}
-    </div>
+    </BorderGlow>
   );
 }
 
@@ -296,65 +295,22 @@ export default function LandingPage({ onLaunch }: { onLaunch: () => void }) {
       overflowY: 'auto',
       overflowX: 'hidden',
     }}>
-
-      {/* ── NAVBAR ── */}
-      <nav style={{
-        position: 'sticky', top: 0, zIndex: 50,
-        background: 'rgba(6,11,24,0.92)',
-        backdropFilter: 'blur(12px)',
-        borderBottom: '1px solid rgba(37,99,235,0.12)',
-        display: 'flex', alignItems: 'center',
-        padding: '0 48px', height: 60, gap: 16,
-      }}>
-        <AudithorLogo size={30}/>
-        <div style={{ lineHeight: 1 }}>
-          <div style={{ fontSize: 15, fontWeight: 800, letterSpacing: '-0.03em' }}>
-            <span style={{ color: '#2563eb' }}>Audit</span>
-            <span style={{ color: '#e2f0f7' }}>hor</span>
-          </div>
-          <div style={{ fontSize: 7, letterSpacing: '0.18em', color: '#334155', fontFamily: 'JetBrains Mono, monospace', marginTop: 1 }}>
-            SECURITY · STREAM
-          </div>
-        </div>
-
-        <div style={{ flex: 1 }}/>
-
-        {['Features', 'Pricing', 'Architecture', 'Docs'].map(item => (
-          <a key={item} href={`#${item.toLowerCase()}`} style={{
-            fontSize: 13, color: '#475569', fontWeight: 500,
-            textDecoration: 'none', transition: 'color 0.2s',
-          }}
-          onMouseEnter={e => (e.currentTarget as HTMLAnchorElement).style.color = '#93c5fd'}
-          onMouseLeave={e => (e.currentTarget as HTMLAnchorElement).style.color = '#475569'}
-          >{item}</a>
-        ))}
-
-        <div style={{
-          background: 'rgba(37,99,235,0.1)',
-          border: '1px solid rgba(37,99,235,0.25)',
-          color: '#60a5fa', borderRadius: 4,
-          padding: '4px 10px', fontSize: 10,
-          fontFamily: 'JetBrains Mono, monospace', fontWeight: 600,
-        }}>HEDERA TESTNET</div>
-
-        <ClickSpark sparkColor="#3b82f6" sparkCount={8} sparkRadius={20} sparkSize={6}>
-          <button onClick={onLaunch} style={{
-            background: 'linear-gradient(135deg, #1d4ed8, #2563eb)',
-            color: 'white', border: 'none', borderRadius: 6,
-            padding: '8px 20px', fontSize: 13, fontWeight: 700,
-            cursor: 'pointer', fontFamily: 'Sora, sans-serif',
-            boxShadow: '0 0 16px rgba(37,99,235,0.3)',
-            position: 'relative', zIndex: 1,
-          }}>Launch App →</button>
-        </ClickSpark>
-      </nav>
+      <PillNav
+        items={[
+          { label: 'Features', href: '#features' },
+          { label: 'Architecture', href: '#architecture' },
+          { label: 'Pricing', href: '#pricing' },
+          { label: 'Docs', href: '#docs' },
+        ]}
+        onLaunch={onLaunch}
+      />
 
       {/* ── HERO ── */}
       <section style={{
         position: 'relative', minHeight: '90vh',
         display: 'flex', flexDirection: 'column',
         alignItems: 'center', justifyContent: 'center',
-        padding: '80px 48px 60px', textAlign: 'center',
+        padding: '80px 48px 60px', paddingTop: 120, textAlign: 'center',
         overflow: 'hidden',
       }}>
         <div style={{ position: 'absolute', inset: 0, zIndex: 0 }}>
@@ -487,13 +443,13 @@ export default function LandingPage({ onLaunch }: { onLaunch: () => void }) {
               { num: '$500M', label: 'Audit market 2024', sub: 'growing 35% year over year' },
               { num: '15,000+', label: 'Active Web3 projects', sub: 'deploying smart contracts today' },
             ].map((kpi, i) => (
-              <div key={kpi.label} style={{
-                background: i === 1 || i === 2 ? '#0f172a' : '#0d1422',
-                border: '1px solid rgba(37,99,235,0.12)',
-                borderRadius: 8,
-                padding: '32px 28px',
-                transition: 'border-color 0.2s',
-              }}>
+              <BorderGlow
+                key={kpi.label}
+                backgroundColor={i === 1 || i === 2 ? '#0f172a' : '#0d1422'}
+                glowColor="220 80 60"
+                borderRadius={8}
+                style={{ padding: '32px 28px' }}
+              >
                 <div style={{
                   fontSize: 52,
                   fontWeight: 900,
@@ -505,7 +461,7 @@ export default function LandingPage({ onLaunch }: { onLaunch: () => void }) {
                 }}>{kpi.num}</div>
                 <div style={{ fontSize: 16, fontWeight: 700, color: '#e2f0f7', marginBottom: 6 }}>{kpi.label}</div>
                 <div style={{ fontSize: 13, color: '#475569', lineHeight: 1.5 }}>{kpi.sub}</div>
-              </div>
+              </BorderGlow>
             ))}
           </div>
         </div>
@@ -531,7 +487,7 @@ export default function LandingPage({ onLaunch }: { onLaunch: () => void }) {
             {[
               { num: '$0.01', label: 'Minimum scan cost', sub: 'vs $15,000+ traditional' },
               { num: '60s', label: 'Max scan duration', sub: 'vs 4-8 weeks traditional' },
-              { num: '4', label: 'Specialized AI agents', sub: 'working in parallel' },
+              { num: '7', label: 'AI Agents', sub: 'across 2 auto-detected pipelines' },
               { num: '86%', label: 'Gross margin', sub: 'on pay-per-scan revenue' },
             ].map(stat => (
               <div key={stat.label} style={{
@@ -574,11 +530,13 @@ export default function LandingPage({ onLaunch }: { onLaunch: () => void }) {
                 color: '#9333ea',
               },
             ].map(s => (
-              <div key={s.name} style={{
-                background: '#0a0f1e',
-                border: '1px solid rgba(37,99,235,0.15)',
-                borderRadius: 8, padding: '24px 20px',
-              }}>
+              <BorderGlow
+                key={s.name}
+                backgroundColor="#0a0f1e"
+                glowColor="220 80 60"
+                borderRadius={8}
+                style={{ padding: '24px 20px' }}
+              >
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                     <span style={{ fontSize: 20 }}>{s.logo}</span>
@@ -596,7 +554,7 @@ export default function LandingPage({ onLaunch }: { onLaunch: () => void }) {
                   {s.track}
                 </div>
                 <div style={{ fontSize: 12, color: '#475569', lineHeight: 1.6 }}>{s.desc}</div>
-              </div>
+              </BorderGlow>
             ))}
           </div>
         </div>
@@ -672,8 +630,8 @@ export default function LandingPage({ onLaunch }: { onLaunch: () => void }) {
               desc="Every audit hash is inscribed permanently on Hedera Consensus Service. Verifiable by investors, regulators, and users — forever." />
             <FeatureCard icon="🦄" title="Pay with any token"
               desc="Uniswap routes your ETH, USDC, DAI or any ERC-20 automatically to the settlement token. No pre-buying, zero friction." />
-            <FeatureCard icon="🤖" title="4 specialized agents" tag="AI"
-              desc="Reentrancy agent, Access Control agent, Logic agent, and Economic Attack agent work in parallel for maximum coverage." />
+            <FeatureCard icon="🤖" title="7 specialized agents" tag="AI"
+              desc="Two auto-detected pipelines: Smart Contract (Static + Semantic + Validator in parallel) and Classic Code (Injection → Auth → Crypto → DataLeak → Validator sequentially). No configuration needed." />
             <FeatureCard icon="🔄" title="CI/CD integration"
               desc="Scan at every deploy. If a CRITICAL vulnerability is detected, the pipeline is blocked. Build a verifiable audit history over time." />
           </div>
@@ -718,16 +676,16 @@ export default function LandingPage({ onLaunch }: { onLaunch: () => void }) {
           </div>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 20, marginBottom: 40 }}>
             <PricingCard
-              name="Basic Agent" model="GPT-4o mini" price="$0.00005/s" color="#60a5fa"
-              features={['Reentrancy detection', 'Access control checks', 'Integer overflow', 'Basic pattern matching']}
+              name="Basic Agent" model="DeepSeek-V3 + Gemini 1.5 Flash" price="$0.00005/s" color="#60a5fa"
+              features={['StaticAgent + InjectionAgent', 'Pattern matching, injection & crypto', 'SQL injection, XSS, SSRF', 'Hardcoded secrets, weak hashing']}
             />
             <PricingCard
-              name="Pro Agent" model="Claude Sonnet" price="$0.00015/s" color="#2563eb" recommended
-              features={['All Basic features', 'Flash loan vectors', 'Oracle manipulation', 'Advanced logic flaws', 'Contextual reasoning']}
+              name="Pro Agent" model="DeepSeek-V3 + Gemini 1.5 Flash" price="$0.00015/s" color="#2563eb" recommended
+              features={['Full pipeline — all 7 agents', 'SemanticAgent contextual reasoning', 'AuthAgent — JWT, IDOR, OAuth', 'DataLeakAgent — CORS, info disclosure', 'ValidatorAgent dedup & PoC']}
             />
             <PricingCard
-              name="Enterprise Agent" model="Claude Opus" price="$0.00040/s" color="#1d4ed8"
-              features={['All Pro features', 'MEV attack vectors', 'Cross-contract analysis', 'Economic modeling', 'Adversarial simulation']}
+              name="Enterprise Agent" model="Llama 3.3 70B ValidatorAgent" price="$0.00040/s" color="#1d4ed8"
+              features={['All agents + ValidatorAgent', 'PoC generation per finding', 'Cross-contract analysis', 'Economic attack modeling', 'Adversarial simulation']}
             />
           </div>
           {/* Criticality bonuses */}
