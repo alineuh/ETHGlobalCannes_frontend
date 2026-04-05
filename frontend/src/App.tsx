@@ -44,36 +44,6 @@ const SEV: Record<string, { border: string; badge: string; text: string }> = {
   LOW:      { border: '#3b82f6', badge: 'rgba(59,130,246,0.1)', text: '#3b82f6' },
 }
 
-// --- AGENT CONFIG ---
-const AGENTS = [
-  {
-    id: 'basic',
-    name: 'Basic Agent',
-    model: 'GPT-4o mini',
-    price: '$0.00005/s',
-    desc: 'Standard detection — Reentrancy, Overflow, Access Control',
-    color: '#3b82f6',
-    recommended: false,
-  },
-  {
-    id: 'pro',
-    name: 'Pro Agent',
-    model: 'Claude Sonnet',
-    price: '$0.00015/s',
-    desc: 'Advanced reasoning — Flash loans, Oracle manipulation',
-    color: '#2563eb',
-    recommended: true,
-  },
-  {
-    id: 'enterprise',
-    name: 'Enterprise Agent',
-    model: 'Claude Opus',
-    price: '$0.00040/s',
-    desc: 'Maximum depth — MEV, Cross-contract, Economic attacks',
-    color: '#1d4ed8',
-    recommended: false,
-  },
-] as const
 
 // --- FINDING CARD ---
 function FindingCard({ finding }: { finding: AuditFinding }) {
@@ -389,58 +359,30 @@ export default function App() {
             </div>
 
             {/* Change 4: Agent selector */}
-            <div style={{
-              background: '#0a0f1e',
-              border: '1px solid rgba(37,99,235,0.2)',
-              borderRadius: 6,
-              overflow: 'hidden',
-              flexShrink: 0,
-            }}>
+            {/* Agent dropdown */}
+            <div style={{ flexShrink: 0 }}>
               <div style={{
-                padding: '8px 14px',
-                borderBottom: '1px solid rgba(37,99,235,0.1)',
-                fontSize: 10, fontWeight: 700, color: '#64748b',
+                fontSize: 9, fontWeight: 700, color: '#475569',
                 letterSpacing: '0.1em', fontFamily: 'JetBrains Mono, monospace',
+                marginBottom: 6,
               }}>SELECT AI AGENT</div>
-
-              {AGENTS.map(agent => (
-                <div
-                  key={agent.id}
-                  onClick={() => setSelectedAgent(agent.id)}
-                  style={{
-                    padding: '10px 14px', cursor: 'pointer',
-                    display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-                    background: selectedAgent === agent.id ? 'rgba(37,99,235,0.1)' : 'transparent',
-                    borderLeft: selectedAgent === agent.id ? `3px solid ${agent.color}` : '3px solid transparent',
-                    transition: 'all 0.15s',
-                  }}
-                >
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                      <span style={{
-                        fontSize: 12, fontWeight: 700,
-                        color: selectedAgent === agent.id ? agent.color : '#94a3b8',
-                      }}>{agent.name}</span>
-                      {agent.recommended && (
-                        <span style={{
-                          fontSize: 9, fontWeight: 700,
-                          background: 'rgba(37,99,235,0.15)', color: '#3b82f6',
-                          border: '1px solid rgba(37,99,235,0.25)',
-                          borderRadius: 3, padding: '1px 5px', letterSpacing: '0.05em',
-                        }}>RECOMMENDED</span>
-                      )}
-                    </div>
-                    <div style={{ fontSize: 10, color: '#475569', fontFamily: 'JetBrains Mono, monospace' }}>
-                      {agent.model} · {agent.desc}
-                    </div>
-                  </div>
-                  <div style={{
-                    fontFamily: 'JetBrains Mono, monospace', fontSize: 11, fontWeight: 700,
-                    color: selectedAgent === agent.id ? agent.color : '#475569',
-                    flexShrink: 0, marginLeft: 12,
-                  }}>{agent.price}</div>
-                </div>
-              ))}
+              <select
+                className="agent-select"
+                value={selectedAgent}
+                onChange={e => setSelectedAgent(e.target.value)}
+              >
+                <option value="basic">Basic Agent — GPT-4o mini · $0.00005/s</option>
+                <option value="pro">Pro Agent ⭐ — Claude Sonnet · $0.00015/s (Recommended)</option>
+                <option value="enterprise">Enterprise Agent — Claude Opus · $0.00040/s</option>
+              </select>
+              <div style={{
+                marginTop: 6, fontSize: 10, color: '#475569',
+                fontFamily: 'JetBrains Mono, monospace',
+              }}>
+                {selectedAgent === 'basic' && 'Reentrancy · Overflow · Access Control'}
+                {selectedAgent === 'pro' && 'All Basic + Flash loans · Oracle manipulation · Logic flaws'}
+                {selectedAgent === 'enterprise' && 'All Pro + MEV · Cross-contract · Economic attacks'}
+              </div>
             </div>
 
             {/* Code card — Change 1: borderRadius 12→6 */}
